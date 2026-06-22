@@ -1,0 +1,42 @@
+[
+  {
+    "filename": "maintenance_procedure_P101.txt",
+    "doc_type": "Maintenance Procedure",
+    "asset_tag": "P-101",
+    "plant": "VFC",
+    "last_updated": "2024-12-01",
+    "criticality": "HIGH"
+  },
+  {
+    "filename": "incident_report_IR2024_047.txt",
+    "doc_type": "Incident Report",
+    "asset_tag": "P-103,HE-301",
+    "plant": "VFC",
+    "last_updated": "2024-08-09",
+    "criticality": "HIGH"
+  },
+  {
+    "filename": "oisd_116_extract.txt",
+    "doc_type": "Regulatory Standard",
+    "asset_tag": "ALL",
+    "plant": "ALL",
+    "last_updated": "2024-01-01",
+    "criticality": "REGULATORY"
+  },
+  {
+    "filename": "work_orders_log.txt",
+    "doc_type": "Work Order Log",
+    "asset_tag": "P-101,HE-301,GD-303,V-101A",
+    "plant": "VFC",
+    "last_updated": "2024-12-22",
+    "criticality": "MEDIUM"
+  },
+  {
+    "filename": "regulatory_compliance_audit.txt",
+    "doc_type": "Compliance Audit",
+    "asset_tag": "ALL",
+    "plant": "VFC",
+    "last_updated": "2024-10-15",
+    "criticality": "HIGH"
+  }
+]

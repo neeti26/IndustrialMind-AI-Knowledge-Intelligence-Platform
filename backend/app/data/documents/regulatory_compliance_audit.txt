@@ -1,0 +1,70 @@
+SAFETY AND REGULATORY COMPLIANCE AUDIT REPORT
+Audit Reference: VFC-AUDIT-2024-Q3
+Plant: Visakhapatnam Fertilizer Complex (VFC)
+Audit Period: July - September 2024
+Audited by: Internal Safety Team + DISH Inspector (as observer)
+Date of Report: 15-October-2024
+
+EXECUTIVE SUMMARY
+Overall Compliance Score: 76% (Target: 90%)
+Critical Non-Conformances: 2
+Major Non-Conformances: 5
+Minor Observations: 12
+
+CRITICAL NON-CONFORMANCES (Require immediate action)
+
+CNC-2024-01: OISD-116 Section 12.4 — Permit-to-Work Cross-Reference
+Finding: Investigation of IR-2024-047 (near-miss, Aug 2024) revealed that the
+PTW system has no mechanism to cross-reference active permits with real-time gas
+sensor data. Permit issuers rely on point-in-time gas tests rather than trending.
+Regulation: OISD-116 Clause 12.4, 12.5
+Risk: HIGH — potential for compound hazard conditions to go undetected
+Corrective Action Required: Implement automated PTW-sensor cross-reference system
+Target Date: 31-March-2025
+Status: OPEN
+
+CNC-2024-02: Factory Act 1948, Section 41B — Hazard Identification System
+Finding: Current HAZOP documentation for Ammonia Synthesis Loop last updated in
+2019. Process modifications in 2022 (revamp of HE-301 circuit) were not reflected
+in HAZOP update. This represents a significant gap in process safety documentation.
+Regulation: Factory Act 1948, Section 41B; OISD-105 Clause 4.2
+Risk: HIGH — process safety basis potentially invalid for current configuration
+Corrective Action Required: HAZOP revalidation for modified circuits
+Target Date: 30-June-2025
+Status: OPEN
+
+MAJOR NON-CONFORMANCES
+
+MNC-2024-01: OISD-116 Section 18.2 — HE-301 Flange Inspection Overdue
+Finding: HE-301 flange leak detection survey last performed 14 months ago.
+Standard requires 6-monthly survey for NH3 service.
+Status: CLOSED (post-incident action taken)
+
+MNC-2024-02: Spare Parts Criticality — P-101 Mechanical Seal
+Finding: John Crane T21 seal (critical spare for P-101) at zero stock.
+OISD best practice requires minimum 1 unit on hand for critical rotating equipment.
+Status: OPEN — purchase order raised, ETA 6 weeks
+
+MNC-2024-03: Contractor Induction Records — NDT Team
+Finding: Bharat NDT Services — 2 of 4 technicians lack current site induction
+(>12 months since last induction). Cannot perform confined space work.
+Status: OPEN — induction scheduled January 2025
+
+MNC-2024-04: Emergency Response Drill — Area 3
+Finding: Last NH3 release drill in Area 3 was 18 months ago. Factory Act
+requires annual emergency drill for hazardous zones.
+Status: OPEN — drill scheduled February 2025
+
+MNC-2024-05: DGMS Statutory Return — Q2 2024
+Finding: Q2 2024 statutory safety return to DGMS submitted 22 days late.
+Status: CLOSED (submitted with explanation)
+
+COMPLIANCE TRACKING SUMMARY
+Standard          | Clauses Audited | Compliant | Non-Compliant | Score
+OISD-116          | 45              | 38        | 7             | 84%
+Factory Act 1948  | 22              | 16        | 6             | 73%
+OISD-105          | 18              | 12        | 6             | 67%
+DGMS Guidelines   | 10              | 8         | 2             | 80%
+OVERALL           | 95              | 74        | 21            | 76%
+
+NEXT AUDIT: January 2025 (focused re-audit on CNC-2024-01 and CNC-2024-02)

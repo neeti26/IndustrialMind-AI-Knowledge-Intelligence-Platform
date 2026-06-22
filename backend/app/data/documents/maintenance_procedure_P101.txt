@@ -1,0 +1,48 @@
+MAINTENANCE PROCEDURE — CENTRIFUGAL PUMP P-101
+Document No: MP-2024-P101-REV3
+Plant: Visakhapatnam Fertilizer Complex (VFC)
+Unit: Ammonia Synthesis Loop — Feed Section
+Asset Tag: P-101
+Equipment Type: Centrifugal Pump (API 610)
+Criticality: HIGH — Single-point failure risk to ammonia feed
+
+1. SCOPE
+This procedure governs planned and corrective maintenance for pump P-101, the primary
+feed pump for ammonia synthesis loop. Any deviation from this procedure must be approved
+by the Unit Safety Officer before work commencement.
+
+2. SAFETY PRECAUTIONS
+2.1 Isolate pump from process line using isolation valves V-101A and V-101B
+2.2 Depressurise and purge with nitrogen before any seal inspection
+2.3 Ensure all hot work permits are suspended within 10m radius during maintenance
+2.4 Monitor for H2S: maximum allowable concentration 10 ppm (OISD-116, Clause 7.3)
+2.5 Two-man rule applies — no lone worker during confined space access to pump pit
+
+3. SCHEDULED MAINTENANCE INTERVALS
+3.1 Daily: Vibration check — alarm if >7.1 mm/s RMS (ISO 10816-3 Zone B limit)
+3.2 Weekly: Bearing temperature — alarm if >75°C, trip if >90°C
+3.3 Monthly: Mechanical seal inspection — replace if leak rate >10 drops/min
+3.4 Quarterly: Impeller clearance measurement — tolerance 0.3mm ± 0.05mm
+3.5 Annual: Full overhaul including bearing replacement, alignment check
+
+4. LAST KNOWN MAINTENANCE RECORDS
+4.1 Last annual overhaul: 14-March-2024 — Bearing replaced (SKF 6314-2Z), alignment OK
+4.2 Last seal inspection: 22-November-2024 — Seal Type 2 replaced (John Crane T21)
+4.3 Vibration reading (last 30 days avg): 5.8 mm/s RMS — within Zone B
+4.4 Bearing temperature (last reading): 68°C — within limits
+
+5. KNOWN ISSUES / OPEN WORK ORDERS
+5.1 WO-2024-1847: Minor seal weep noted 18-December-2024 — monitor until next inspection
+5.2 WO-2024-1901: Suction strainer fouling suspected — schedule cleaning Feb 2025
+5.3 NOTE: P-101 has shown a pattern of bearing wear acceleration during summer months
+    (May-August). Root cause analysis WO-2023-0892 attributed to cooling water quality.
+
+6. REGULATORY COMPLIANCE
+6.1 Covered under Factory Act 1948, Schedule I (hazardous processes)
+6.2 OISD-116 Section 7: Rotating equipment safety — last audit PASSED (Sep-2024)
+6.3 Next statutory inspection due: March-2025
+
+7. SPARE PARTS LIST
+7.1 Bearing: SKF 6314-2Z (critical spare — minimum 2 units in store)
+7.2 Mechanical Seal: John Crane T21 (1 unit in store — REORDER REQUIRED)
+7.3 Gasket Set: VFC-P101-GS-003 (2 sets available)

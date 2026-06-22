@@ -1,0 +1,64 @@
+OISD STANDARD 116 — FIRE PREVENTION AND PROTECTION SYSTEM FOR
+PETROLEUM REFINERIES AND OIL/GAS PROCESSING PLANTS
+(Relevant Extracts — Ammonia and Gas Handling Facilities)
+
+SECTION 7: SAFETY IN ROTATING EQUIPMENT OPERATIONS
+
+7.1 All rotating equipment in hazardous area classification Zone 1 and Zone 2 must be
+    fitted with automatic vibration monitoring systems. Alarm setpoints must be per
+    ISO 10816-3. Trip setpoints must be set at 150% of Zone B upper limit.
+
+7.2 Mechanical seals on pumps handling toxic or flammable media must be inspected at
+    intervals not exceeding 90 days. Any detected leak exceeding 5 drops/minute must
+    trigger a work order within 24 hours.
+
+7.3 Maximum permissible H2S concentration for personnel entry: 10 ppm (8-hour TWA).
+    Immediately Dangerous to Life or Health (IDLH): 100 ppm. 
+    Any area reading >50 ppm must trigger immediate evacuation.
+
+7.4 Ammonia (NH3) alarm thresholds:
+    Level 1 Alert: 25 ppm — notify safety officer, review active permits in zone
+    Level 2 Alarm: 50 ppm — suspend all hot work, prepare for evacuation
+    Level 3 Emergency: 100 ppm — mandatory evacuation, emergency response activation
+
+SECTION 12: HOT WORK PERMIT SYSTEM
+
+12.1 No hot work permit shall be issued without a gas test conducted within 1 hour
+     of work commencement. Gas tests must be repeated every 2 hours for continuous work.
+
+12.2 Hot work permits must not be issued in areas where toxic gas concentration exceeds
+     25% of the Lower Explosive Limit (LEL) or 10 ppm for H2S / 25 ppm for NH3.
+
+12.3 Permit issuing authority must verify that no concurrent maintenance activity on
+     adjacent equipment could create compound hazard conditions.
+
+12.4 HOT WORK NEAR HAZARDOUS GAS ZONES: If any gas detector within 15 meters of
+     the hot work zone has recorded readings above 50% of Level 1 Alert threshold
+     in the preceding 4 hours, permit issuance requires additional sign-off from
+     the Plant Safety Officer (not just the Shift Supervisor).
+
+12.5 Permit-to-Work (PTW) system must maintain a log of all concurrent permits
+     active in any defined zone at any given time. This log must be accessible
+     to all permit issuers in real-time.
+
+SECTION 18: INSPECTION AND TESTING
+
+18.1 Heat exchangers in hazardous fluid service must be inspected per ASME PCC-2.
+     Maximum inspection interval: 12 months. Any equipment showing wall thickness
+     below minimum design thickness must be taken out of service immediately.
+
+18.2 Flange connections in toxic service (NH3, H2S, HF) must undergo leak detection
+     survey using appropriate detector at intervals not exceeding 6 months.
+
+18.3 Risk-based inspection (RBI) may be used to extend intervals beyond standard
+     schedule with documented engineering justification and Safety Officer approval.
+
+SECTION 22: CONTRACTOR SAFETY MANAGEMENT
+
+22.1 All contractor personnel must complete site-specific induction before commencing
+     work. Induction records must be maintained for 3 years.
+
+22.2 Contractors executing work under hot work, confined space, or height permits
+     must have competent supervisor present at all times.
+
+22.3 Contractor performance (including near-miss reporting) must be reviewed quarterly.

@@ -1,0 +1,48 @@
+WORK ORDER LOG — Visakhapatnam Fertilizer Complex (VFC)
+Extract: Last 90 days — Area 3, Ammonia Synthesis Loop
+Generated: 22-December-2024
+
+WO-2024-1785 | Asset: P-101 | Type: Preventive | Status: CLOSED
+Description: Quarterly vibration analysis and bearing temperature check
+Findings: Vibration 5.8 mm/s (within limits). Bearing temp 68°C (within limits).
+Completed: 01-Dec-2024 | Technician: R. Mohan
+
+WO-2024-1801 | Asset: HE-301 | Type: Corrective | Status: OPEN
+Description: Flange gasket replacement following IR-2024-047 incident
+Priority: HIGH | Due: 05-Jan-2025 | Assigned: M. Krishnan
+Note: Interim monthly leak survey ordered until gasket replacement complete
+
+WO-2024-1847 | Asset: P-101 | Type: Corrective | Status: OPEN (Monitor)
+Description: Minor seal weep noted during routine inspection
+Findings: 3-4 drops/min — below 5 drop/min OISD threshold but trending up
+Priority: MEDIUM | Due: 15-Feb-2025 | Assigned: R. Mohan
+Note: Seal spares inventory — John Crane T21 at ZERO stock. REORDER TRIGGERED.
+
+WO-2024-1901 | Asset: P-101 | Type: Predictive | Status: OPEN
+Description: Suction strainer suspected fouling — differential pressure rising
+Findings: dP across strainer: 0.8 bar (normal: 0.3-0.5 bar)
+Priority: MEDIUM | Due: 10-Feb-2025 | Assigned: TBD
+Note: Trending analysis shows 30% increase in dP over past 6 weeks
+
+WO-2024-1923 | Asset: GD-303 | Type: Calibration | Status: CLOSED
+Description: Routine 6-monthly calibration of NH3 gas detector
+Findings: Calibration within spec. Zero drift: 0.3 ppm (limit: 1 ppm). PASS.
+Completed: 15-Dec-2024 | Technician: Instrumentation Team
+
+WO-2024-1955 | Asset: HE-301 | Type: Inspection | Status: OPEN
+Description: Wall thickness measurement following increased inspection frequency
+Priority: HIGH | Due: 15-Jan-2025 | Assigned: NDT Team (external contractor)
+Note: Requires confined space entry permit + gas clearance certificate
+Contractor: Bharat NDT Services — site induction due before work start
+
+WO-2024-1967 | Asset: V-101A | Type: Preventive | Status: OPEN
+Description: Isolation valve V-101A — actuator maintenance
+Note: V-101A is P-101 isolation valve. Simultaneous maintenance of V-101A and
+      P-101 must NOT occur — creates single-point isolation failure risk.
+Priority: LOW | Due: 28-Feb-2025
+
+PERMIT HISTORY (Last 30 days):
+HWP-2024-115: Hot Work — Welding repair on pipe rack PR-5 | CLOSED | 10-Dec-2024
+HWP-2024-118: Hot Work — Flange bolt replacement HE-301 | OPEN | Active since 20-Dec-2024
+CSP-2024-089: Confined Space — Vessel V-202 cleaning | CLOSED | 05-Dec-2024
+EWP-2024-201: Electrical Work — MCC-3 panel maintenance | OPEN | Active since 18-Dec-2024

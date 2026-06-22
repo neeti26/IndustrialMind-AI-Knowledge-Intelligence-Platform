@@ -1,0 +1,52 @@
+INCIDENT INVESTIGATION REPORT
+Report No: IR-2024-047
+Plant: Visakhapatnam Fertilizer Complex (VFC)
+Date of Incident: 07-August-2024
+Location: Ammonia Synthesis Loop — Area 3, Near P-103 / Heat Exchanger HE-301
+Incident Classification: Near-Miss (High Potential)
+Reported by: Shift Supervisor T. Ramachandran
+Investigated by: Safety Officer K. Prasad, Maintenance Manager R. Singh
+
+1. INCIDENT DESCRIPTION
+At 14:35 IST on 07-August-2024, the area gas detector GD-303 alarmed at 45 ppm NH3
+(alarm threshold: 25 ppm). Simultaneously, maintenance crew was executing Work Order
+WO-2024-1102 (mechanical seal replacement on P-103) under Hot Work Permit HWP-2024-089.
+The combination of elevated NH3 concentration and active hot work in the same zone created
+a compound hazard condition that required immediate evacuation of Area 3.
+
+2. TIMELINE
+14:20 — WO-2024-1102 commenced. Hot work permit HWP-2024-089 active.
+14:30 — GD-303 first reading: 18 ppm NH3 (below alarm threshold, not flagged)
+14:35 — GD-303 alarm: 45 ppm NH3. Hot work suspended. Area evacuation ordered.
+14:42 — Source identified: small flange leak on HE-301 inlet (unrelated to ongoing WO)
+14:55 — Area cleared. Gas concentration returned to <5 ppm.
+15:10 — All-clear issued. Work permit re-evaluated before resuming.
+
+3. ROOT CAUSE ANALYSIS
+3.1 Immediate Cause: HE-301 inlet flange gasket micro-failure causing NH3 release
+3.2 Contributing Factor 1: No real-time cross-reference between active gas readings
+    and concurrent hot work permits — safety officer was not alerted at 18 ppm reading
+    because it was below the standalone alarm threshold
+3.3 Contributing Factor 2: Work Order WO-2024-1102 was issued without checking
+    GD-303's last 48h trend (slight upward drift from 3 ppm to 8 ppm pre-incident)
+3.4 Contributing Factor 3: HE-301 last inspected 14 months ago (overdue by 2 months)
+
+4. CORRECTIVE ACTIONS
+4.1 IMMEDIATE: HE-301 flange gasket replaced. Torque verification completed. [CLOSED]
+4.2 SHORT-TERM: Inspection frequency for HE-301 increased to 6-monthly. [OPEN]
+4.3 SYSTEMIC: Recommend implementing compound risk check before issuing hot work
+    permits — cross-reference gas sensor trends (not just threshold alarms) with
+    active permit zones. [OPEN — assigned to digital safety team]
+4.4 SYSTEMIC: Review all permits active within 15m of any sensor showing >50% of
+    alarm threshold. [OPEN]
+
+5. REGULATORY NOTIFICATION
+5.1 Near-miss reported to DISH (Directorate of Industrial Safety and Health) per
+    Factory Act Section 88A — filed 09-August-2024
+5.2 OISD-116 Clause 12.4 (hot work near hazardous gas zones) — procedure gap identified
+
+6. LESSONS LEARNED
+The critical failure was not a sensor failure — GD-303 functioned correctly. The failure
+was the absence of an intelligence layer to correlate sub-threshold gas readings with
+concurrent hot work permit activity. Had the system flagged the 18 ppm reading in context
+of active HWP-2024-089, the compound risk would have been identified 5 minutes earlier.
