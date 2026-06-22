@@ -1,43 +1,48 @@
 """
 AI Agent — Handles query answering, compliance analysis, and risk assessment.
 Uses OpenAI GPT-4o or Groq Llama as the LLM backbone.
+Gracefully degrades to RAG-only mode if no API key is configured.
 """
-import os
 from typing import Optional
-from openai import OpenAI
 from app.config import get_settings
 from app.services import rag_engine
 from app.services import knowledge_graph as kg
 
 settings = get_settings()
 
-# Lazy client init
-_openai_client: Optional[OpenAI] = None
+_openai_client = None
 _groq_client = None
 
 
 def _get_llm_client():
     global _openai_client, _groq_client
-    if settings.model_provider == "groq":
+    if settings.model_provider == "groq" and settings.groq_api_key:
         if _groq_client is None:
             from groq import Groq
             _groq_client = Groq(api_key=settings.groq_api_key)
-        return _groq_client, "llama-3.3-70b-versatile"
-    else:
+        return _groq_client, "llama-3.3-70b-versatile", "groq"
+    elif settings.openai_api_key and not settings.openai_api_key.startswith("your_"):
         if _openai_client is None:
+            from openai import OpenAI
             _openai_client = OpenAI(api_key=settings.openai_api_key)
-        return _openai_client, "gpt-4o"
+        return _openai_client, "gpt-4o", "openai"
+    return None, None, None
 
 
-def _call_llm(messages: list[dict], temperature: float = 0.2) -> str:
-    client, model = _get_llm_client()
-    response = client.chat.completions.create(
-        model=model,
-        messages=messages,
-        temperature=temperature,
-        max_tokens=1500,
-    )
-    return response.choices[0].message.content or ""
+def _call_llm(messages: list[dict], temperature: float = 0.2) -> Optional[str]:
+    client, model, provider = _get_llm_client()
+    if client is None:
+        return None
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=1500,
+        )
+        return response.choices[0].message.content or ""
+    except Exception as e:
+        return f"[LLM Error: {str(e)}]"
 
 
 SYSTEM_PROMPT = """You are IndustrialMind, an AI Knowledge Intelligence Copilot for
@@ -60,24 +65,44 @@ Rules:
 """
 
 
+def _format_rag_fallback(query: str, chunks: list[dict], graph_context_lines: list[str], risk_alerts: list[dict]) -> str:
+    """Structured answer from RAG chunks when no LLM is available."""
+    parts = [f"**Query:** {query}\n"]
+    parts.append("**Retrieved Context** *(AI synthesis unavailable — configure API key for full answers)*\n")
+    for i, chunk in enumerate(chunks[:3], 1):
+        meta = chunk["metadata"]
+        parts.append(
+            f"**[{i}] {meta.get('filename', 'Unknown')}** "
+            f"(relevance: {int(chunk['relevance_score'] * 100)}%)\n"
+            f"{chunk['content'][:500]}...\n"
+        )
+    if graph_context_lines:
+        parts.append("\n**Knowledge Graph Context:**")
+        for line in graph_context_lines:
+            parts.append(f"- {line}")
+    if risk_alerts:
+        parts.append("\n⚠️ **Active Risk Alerts:**")
+        for r in risk_alerts:
+            parts.append(f"- **{r['label']}** (Risk {r['risk_score']}/10): {r['description']}")
+    parts.append(
+        "\n\n> 💡 *Add `OPENAI_API_KEY` or `GROQ_API_KEY` to environment variables for full AI-generated answers with citations.*"
+    )
+    return "\n".join(parts)
+
+
 def answer_query(query: str) -> dict:
-    """
-    Main RAG-powered query answering with graph context injection.
-    Returns answer + sources + graph context + any detected risks.
-    """
-    # Step 1: Retrieve relevant document chunks
     chunks = rag_engine.retrieve(query, n_results=6)
 
     if not chunks:
         return {
-            "answer": "No documents have been ingested yet. Please run document ingestion first.",
+            "answer": "No documents have been ingested yet. The system is initializing.",
             "sources": [],
             "graph_context": [],
             "risk_alerts": [],
             "confidence": 0.0,
         }
 
-    # Step 2: Build graph context for any mentioned assets
+    # Build graph context
     graph = kg.get_graph()
     graph_context_lines = []
     asset_ids = ["P-101", "P-103", "HE-301", "GD-303", "V-101A"]
@@ -97,7 +122,7 @@ def answer_query(query: str) -> dict:
                 f"Open WOs={open_wos}"
             )
 
-    # Step 3: Add active hazards context if query seems safety-related
+    # Safety keywords check
     safety_keywords = ["safety", "risk", "hazard", "permit", "gas", "nh3", "h2s",
                        "hot work", "seal", "leak", "incident", "near miss", "compliance"]
     is_safety_query = any(kw in query.lower() for kw in safety_keywords)
@@ -115,7 +140,7 @@ def answer_query(query: str) -> dict:
                     "risk_score": h["risk_score"],
                 })
 
-    # Step 4: Build context string for LLM
+    # Build context string for LLM
     context_parts = []
     for chunk in chunks:
         meta = chunk["metadata"]
@@ -128,36 +153,32 @@ def answer_query(query: str) -> dict:
         )
 
     context_str = "\n\n---\n\n".join(context_parts)
-
     if graph_context_lines:
         context_str += "\n\n[KNOWLEDGE GRAPH CONTEXT]\n" + "\n".join(graph_context_lines)
-
     if risk_alerts:
         context_str += "\n\n[ACTIVE RISK ALERTS]\n" + "\n".join(
             f"• {r['label']} (Risk Score: {r['risk_score']}/10): {r['description']}"
             for r in risk_alerts
         )
 
-    # Step 5: Generate answer
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
-            "content": f"""Query: {query}
-
-Retrieved Context:
-{context_str}
-
-Please provide a comprehensive answer with source citations."""
+            "content": f"Query: {query}\n\nRetrieved Context:\n{context_str}\n\nProvide a comprehensive answer with source citations."
         }
     ]
 
-    answer = _call_llm(messages)
+    llm_answer = _call_llm(messages)
     avg_relevance = sum(c["relevance_score"] for c in chunks) / len(chunks) if chunks else 0
 
-    # Format sources
-    sources = []
+    if llm_answer is None:
+        answer = _format_rag_fallback(query, chunks, graph_context_lines, risk_alerts)
+    else:
+        answer = llm_answer
+
     seen = set()
+    sources = []
     for chunk in chunks:
         fname = chunk["metadata"].get("filename", "")
         if fname not in seen:
@@ -179,22 +200,16 @@ Please provide a comprehensive answer with source citations."""
 
 
 def run_compliance_check(asset_id: Optional[str] = None) -> dict:
-    """
-    Run a compliance check across all open findings,
-    optionally filtered by asset.
-    """
     gaps = kg.get_compliance_gaps()
 
     if asset_id:
-        graph = kg.get_graph()
-        relevant_gaps = []
-        for gap in gaps:
-            # Check if asset is mentioned in linked entities
-            if asset_id in gap.get("linked_to", []) or asset_id in gap.get("description", ""):
-                relevant_gaps.append(gap)
-        gaps = relevant_gaps if relevant_gaps else gaps
+        relevant_gaps = [
+            g for g in gaps
+            if asset_id in g.get("linked_to", []) or asset_id in g.get("description", "")
+        ]
+        if relevant_gaps:
+            gaps = relevant_gaps
 
-    # Generate LLM summary of compliance status
     gaps_text = "\n".join(
         f"- [{g['severity']}] {g['id']}: {g['description']} "
         f"(Regulation: {g['regulation']}, Due: {g['target_date']})"
@@ -205,17 +220,26 @@ def run_compliance_check(asset_id: Optional[str] = None) -> dict:
         {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
-            "content": f"""Generate a concise compliance status summary for VFC plant.
-Focus on: risk prioritization, regulatory exposure, and immediate action recommendations.
-
-Open Compliance Findings:
-{gaps_text}
-
-Asset filter: {asset_id or 'All assets'}"""
+            "content": f"Generate a concise compliance status summary for VFC plant.\n"
+                       f"Focus on: risk prioritization, regulatory exposure, and immediate action recommendations.\n\n"
+                       f"Open Compliance Findings:\n{gaps_text}\n\nAsset filter: {asset_id or 'All assets'}"
         }
     ]
 
-    summary = _call_llm(messages)
+    llm_summary = _call_llm(messages)
+
+    if llm_summary is None:
+        summary = (
+            f"**Compliance Status — {len(gaps)} Open Findings**\n\n"
+            + "\n".join(
+                f"**[{g['severity']}] {g['id']}:** {g['description']}  \n"
+                f"*Regulation: {g['regulation']} | Due: {g['target_date']}*"
+                for g in gaps
+            )
+            + "\n\n> *Configure API key for AI-generated prioritization and action plan.*"
+        )
+    else:
+        summary = llm_summary
 
     return {
         "summary": summary,
@@ -227,18 +251,12 @@ Asset filter: {asset_id or 'All assets'}"""
 
 
 def analyze_risk_scenario(scenario: str) -> dict:
-    """
-    Analyze a described risk scenario against known incidents and regulations.
-    """
-    # Retrieve relevant context
     chunks = rag_engine.retrieve(scenario, n_results=8)
     hazards = kg.get_active_hazards()
-    gaps = kg.get_compliance_gaps()
 
     context_str = "\n\n---\n\n".join(
         f"[{c['metadata'].get('filename')}]: {c['content']}" for c in chunks
     )
-
     hazard_str = "\n".join(
         f"• {h['label']} (Score {h['risk_score']}/10): {h['description']}"
         for h in hazards
@@ -248,27 +266,29 @@ def analyze_risk_scenario(scenario: str) -> dict:
         {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
-            "content": f"""Analyze this risk scenario against our plant's history,
-current conditions, and regulatory requirements:
-
-SCENARIO: {scenario}
-
-RELEVANT DOCUMENT CONTEXT:
-{context_str}
-
-KNOWN ACTIVE HAZARDS:
-{hazard_str}
-
-Provide:
-1. Risk assessment (severity, likelihood, regulatory exposure)
-2. Historical precedent from our incident records
-3. Specific regulatory clauses that apply
-4. Immediate recommended actions
-5. Any compound risk conditions this scenario creates"""
+            "content": f"Analyze this risk scenario:\n\nSCENARIO: {scenario}\n\n"
+                       f"RELEVANT DOCUMENT CONTEXT:\n{context_str}\n\n"
+                       f"KNOWN ACTIVE HAZARDS:\n{hazard_str}\n\n"
+                       f"Provide:\n1. Risk assessment (severity, likelihood, regulatory exposure)\n"
+                       f"2. Historical precedent from incident records\n"
+                       f"3. Specific regulatory clauses that apply\n"
+                       f"4. Immediate recommended actions\n"
+                       f"5. Any compound risk conditions this scenario creates"
         }
     ]
 
-    analysis = _call_llm(messages, temperature=0.1)
+    llm_analysis = _call_llm(messages, temperature=0.1)
+
+    if llm_analysis is None:
+        analysis = (
+            f"**Scenario:** {scenario}\n\n"
+            f"**Active Hazards Cross-Referenced:**\n"
+            + "\n".join(f"- {h['label']} (Risk {h['risk_score']}/10)" for h in hazards)
+            + f"\n\n**Retrieved {len(chunks)} relevant document sections.**\n\n"
+            f"> *Configure API key for full AI risk analysis.*"
+        )
+    else:
+        analysis = llm_analysis
 
     return {
         "scenario": scenario,

@@ -1,22 +1,41 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Use Next.js API proxy route in production (avoids CORS, works on Vercel)
+// Falls back to direct backend URL in development
+const isServer = typeof window === "undefined";
+const DIRECT_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+function getBaseUrl(): string {
+  if (isServer) return DIRECT_URL;
+  // In browser: use the Next.js proxy route
+  return "/api/proxy";
+}
 
 export async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`);
-  if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${path}`, { cache: "no-store" });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`API ${res.status}: ${text}`);
+  }
   return res.json();
 }
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
+    cache: "no-store",
   });
-  if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`API ${res.status}: ${text}`);
+  }
   return res.json();
 }
 
-// API types
+// ── API Response Types ─────────────────────────────────────────────────────
+
 export interface QueryResponse {
   answer: string;
   sources: Array<{
