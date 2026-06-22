@@ -12,19 +12,20 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Auto-seed documents on startup if dir exists and collection is empty
-    status = rag_engine.get_ingestion_status()
-    if not status["ready"]:
-        docs_dir = settings.documents_dir
-        if os.path.exists(docs_dir):
-            print("[IndustrialMind] Auto-ingesting documents on startup...")
-            result = rag_engine.ingest_documents()
-            print(f"[IndustrialMind] Ingested: {result['ingested']}, chunks: {result['total_chunks']}")
+    try:
+        status = rag_engine.get_ingestion_status()
+        if not status["ready"]:
+            docs_dir = settings.documents_dir
+            if os.path.exists(docs_dir) and os.listdir(docs_dir):
+                print("[IndustrialMind] Auto-ingesting documents...")
+                result = rag_engine.ingest_documents()
+                print(f"[IndustrialMind] Ingested {len(result['ingested'])} files, {result['total_chunks']} chunks")
+            else:
+                print(f"[IndustrialMind] Documents dir empty or missing: {docs_dir}")
         else:
-            print(f"[IndustrialMind] Documents dir not found: {docs_dir}")
-            print("[IndustrialMind] Run: python -m app.data.seed_documents to create sample docs")
-    else:
-        print(f"[IndustrialMind] Vector store ready. {status['total_chunks']} chunks loaded.")
+            print(f"[IndustrialMind] Vector store ready: {status['total_chunks']} chunks")
+    except Exception as e:
+        print(f"[IndustrialMind] Startup warning: {e}")
     yield
 
 
@@ -37,7 +38,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Tighten in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -61,8 +62,14 @@ async def root():
 @app.get("/health")
 async def health():
     from app.services.knowledge_graph import get_graph_stats
-    rag_status = rag_engine.get_ingestion_status()
-    graph_stats = get_graph_stats()
+    try:
+        rag_status = rag_engine.get_ingestion_status()
+    except Exception as e:
+        rag_status = {"error": str(e), "ready": False}
+    try:
+        graph_stats = get_graph_stats()
+    except Exception as e:
+        graph_stats = {"error": str(e)}
     return {
         "status": "healthy",
         "rag": rag_status,
