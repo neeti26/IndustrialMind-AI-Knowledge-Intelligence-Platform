@@ -1,9 +1,8 @@
 {
-  "framework": "nextjs",
   "buildCommand": "npm run build",
-  "outputDirectory": ".next",
+  "framework": "nextjs",
   "installCommand": "npm install",
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://industrialmind-backend.up.railway.app"
+    "NEXT_PUBLIC_API_URL": "https://your-backend-url.com"
   }
 }

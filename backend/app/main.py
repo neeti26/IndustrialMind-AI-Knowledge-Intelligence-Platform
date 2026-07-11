@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import os
 
-from app.routers import documents, query, graph
+from app.routers import documents, query, graph, intelligence
 from app.services import rag_engine
 from app.config import get_settings
 
@@ -47,6 +47,7 @@ app.add_middleware(
 app.include_router(documents.router)
 app.include_router(query.router)
 app.include_router(graph.router)
+app.include_router(intelligence.router)
 
 
 @app.get("/")

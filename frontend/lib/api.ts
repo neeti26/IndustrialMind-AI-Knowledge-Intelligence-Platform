@@ -104,3 +104,58 @@ export interface HazardItem {
   risk_score: number;
   involved_entities: string[];
 }
+
+export interface AssetMaintenance {
+  id: string;
+  label: string;
+  type: string;
+  status: string;
+  criticality: string;
+  area: string;
+  last_maintained: string;
+  next_due: string;
+  open_work_orders: Array<{ id: string; desc: string; priority: string; due: string }>;
+  linked_hazards: string[];
+  linked_incidents: string[];
+  maintenance_risk_score: number;
+}
+
+export interface MaintenanceResponse {
+  assets: AssetMaintenance[];
+  maintenance_schedule: Array<{
+    week: string;
+    assets: string[];
+    actions: string[];
+    risk: string;
+  }>;
+  total_assets: number;
+  overdue_count: number;
+  high_risk_count: number;
+}
+
+export interface LessonsPattern {
+  id: string;
+  title: string;
+  category: string;
+  severity: string;
+  evidence: string[];
+  description: string;
+  risk: string;
+  recommendation: string;
+}
+
+export interface LessonsResponse {
+  analysis: string;
+  patterns: LessonsPattern[];
+  total_incidents_analysed: number;
+  total_compliance_findings: number;
+  total_open_work_orders: number;
+}
+
+export interface RCAResponse {
+  asset_id: string | null;
+  incident_id: string;
+  report: string;
+  sources_consulted: number;
+  graph_nodes_analysed: number;
+}

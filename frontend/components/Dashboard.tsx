@@ -2,8 +2,12 @@
 import { useEffect, useState } from "react";
 import {
   AlertTriangle, ShieldX, Wrench, Network,
-  TrendingUp, FileText, Activity, ArrowRight
+  TrendingUp, FileText, Activity, ArrowRight, BookOpen
 } from "lucide-react";
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip,
+  ResponsiveContainer, AreaChart, Area
+} from "recharts";
 import { apiGet, type GraphStats } from "@/lib/api";
 import type { Page } from "@/app/page";
 
@@ -12,17 +16,54 @@ interface Props {
 }
 
 const ASSET_STATUS = [
-  { id: "P-101", name: "Pump P-101", type: "Centrifugal Pump", status: "OPEN_ISSUES", issues: 2, last: "01-Dec-2024" },
-  { id: "HE-301", name: "Heat Exchanger HE-301", type: "Shell & Tube", status: "OVERDUE_INSPECTION", issues: 2, last: "07-Aug-2024" },
-  { id: "GD-303", name: "Gas Detector GD-303", type: "NH3 Detector", status: "OK", issues: 0, last: "15-Dec-2024" },
-  { id: "V-101A", name: "Isolation Valve V-101A", type: "Gate Valve", status: "PENDING_MAINTENANCE", issues: 1, last: "N/A" },
+  { id: "P-101",  name: "Pump P-101",              type: "Centrifugal Pump", status: "OPEN_ISSUES",          issues: 2, last: "01-Dec-2024" },
+  { id: "HE-301", name: "Heat Exchanger HE-301",   type: "Shell & Tube",     status: "OVERDUE_INSPECTION",   issues: 2, last: "07-Aug-2024" },
+  { id: "GD-303", name: "Gas Detector GD-303",     type: "NH3 Detector",     status: "OK",                   issues: 0, last: "15-Dec-2024" },
+  { id: "V-101A", name: "Isolation Valve V-101A",  type: "Gate Valve",       status: "PENDING_MAINTENANCE",  issues: 1, last: "N/A" },
 ];
 
 const STATUS_STYLE: Record<string, string> = {
-  OK: "text-green-400 bg-green-400/10 border-green-400/20",
-  OPEN_ISSUES: "text-amber-400 bg-amber-400/10 border-amber-400/20",
-  OVERDUE_INSPECTION: "text-red-400 bg-red-400/10 border-red-400/20",
+  OK:                  "text-green-400 bg-green-400/10 border-green-400/20",
+  OPEN_ISSUES:         "text-amber-400 bg-amber-400/10 border-amber-400/20",
+  OVERDUE_INSPECTION:  "text-red-400 bg-red-400/10 border-red-400/20",
   PENDING_MAINTENANCE: "text-orange-400 bg-orange-400/10 border-orange-400/20",
+};
+
+// Trend data for charts
+const COMPLIANCE_TREND = [
+  { month: "Jan", score: 84 },
+  { month: "Feb", score: 83 },
+  { month: "Mar", score: 85 },
+  { month: "Apr", score: 82 },
+  { month: "May", score: 80 },
+  { month: "Jun", score: 81 },
+  { month: "Jul", score: 79 },
+  { month: "Aug", score: 77 },
+  { month: "Sep", score: 76 },
+  { month: "Oct", score: 75 },
+  { month: "Nov", score: 74 },
+  { month: "Dec", score: 76 },
+];
+
+const RISK_TREND = [
+  { month: "Jul", risk: 4.2 },
+  { month: "Aug", risk: 6.8 },  // IR-2024-047
+  { month: "Sep", risk: 5.1 },
+  { month: "Oct", risk: 5.5 },
+  { month: "Nov", risk: 6.0 },
+  { month: "Dec", risk: 7.2 },  // HWP-2024-118 active
+];
+
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass rounded-lg p-2 border border-white/10 text-xs">
+        <p className="text-slate-400">{label}</p>
+        <p className="text-white font-bold">{payload[0].value}</p>
+      </div>
+    );
+  }
+  return null;
 };
 
 export default function Dashboard({ onNavigate }: Props) {
@@ -49,10 +90,10 @@ export default function Dashboard({ onNavigate }: Props) {
       icon: ShieldX,
       color: "text-red-400",
       bg: "bg-red-400/10 border-red-400/20",
-      trend: "Requires immediate action",
+      trend: "Immediate action required",
     },
     {
-      label: "Active Hazards",
+      label: "Active Compound Hazards",
       value: stats?.active_hazards ?? 3,
       icon: AlertTriangle,
       color: "text-orange-400",
@@ -61,11 +102,11 @@ export default function Dashboard({ onNavigate }: Props) {
     },
     {
       label: "Knowledge Nodes",
-      value: stats?.total_nodes ?? 28,
+      value: stats?.total_nodes ?? 30,
       icon: Network,
       color: "text-blue-400",
       bg: "bg-blue-400/10 border-blue-400/20",
-      trend: `${stats?.total_edges ?? 35} relationships`,
+      trend: `${stats?.total_edges ?? 42} relationships`,
     },
   ];
 
@@ -76,7 +117,7 @@ export default function Dashboard({ onNavigate }: Props) {
         <div>
           <h2 className="text-2xl font-bold text-white">Operations Intelligence</h2>
           <p className="text-slate-400 text-sm mt-1">
-            Visakhapatnam Fertilizer Complex — Real-time AI safety & maintenance overview
+            Visakhapatnam Fertilizer Complex — AI safety & maintenance overview
           </p>
         </div>
         <div className="text-right">
@@ -87,7 +128,7 @@ export default function Dashboard({ onNavigate }: Props) {
         </div>
       </div>
 
-      {/* Alert Banner */}
+      {/* Critical Alert Banner */}
       <div className="glass-strong rounded-xl p-4 border-l-4 border-red-500 flex items-start gap-3">
         <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center shrink-0 pulse-alert">
           <AlertTriangle className="w-4 h-4 text-red-400" />
@@ -96,7 +137,7 @@ export default function Dashboard({ onNavigate }: Props) {
           <p className="text-sm font-semibold text-white">Compound Risk Alert — Area 3</p>
           <p className="text-xs text-slate-400 mt-0.5">
             Active Hot Work Permit HWP-2024-118 (HE-301) overlapping with P-101 seal wear trend
-            and zero critical spare stock. OISD-116 Clause 12.4 cross-reference gap unresolved.
+            and zero critical spare stock. OISD-116 Clause 12.4 cross-reference gap (CNC-2024-01) unresolved.
           </p>
         </div>
         <button
@@ -124,7 +165,58 @@ export default function Dashboard({ onNavigate }: Props) {
         })}
       </div>
 
-      {/* Asset Status + Recent Activity */}
+      {/* Trend Charts */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="glass rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <ShieldX className="w-4 h-4 text-amber-400" />
+              Compliance Score Trend — 2024
+            </h3>
+            <span className="text-xs font-bold text-amber-400">76% current</span>
+          </div>
+          <ResponsiveContainer width="100%" height={130}>
+            <AreaChart data={COMPLIANCE_TREND} margin={{ top: 5, right: 5, left: -30, bottom: 0 }}>
+              <defs>
+                <linearGradient id="compGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 9 }} />
+              <YAxis domain={[60, 90]} tick={{ fill: "#64748b", fontSize: 9 }} />
+              <Tooltip content={<CustomTooltip />} />
+              <Area type="monotone" dataKey="score" stroke="#f59e0b" strokeWidth={2} fill="url(#compGrad)" dot={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="glass rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-400" />
+              Compound Risk Score Trend — 2024
+            </h3>
+            <span className="text-xs font-bold text-red-400">7.2 current</span>
+          </div>
+          <ResponsiveContainer width="100%" height={130}>
+            <AreaChart data={RISK_TREND} margin={{ top: 5, right: 5, left: -30, bottom: 0 }}>
+              <defs>
+                <linearGradient id="riskGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 9 }} />
+              <YAxis domain={[0, 10]} tick={{ fill: "#64748b", fontSize: 9 }} />
+              <Tooltip content={<CustomTooltip />} />
+              <Area type="monotone" dataKey="risk" stroke="#ef4444" strokeWidth={2} fill="url(#riskGrad)" dot={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Asset Status + Quick Actions */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Asset Status */}
         <div className="glass rounded-xl p-5">
@@ -181,6 +273,13 @@ export default function Dashboard({ onNavigate }: Props) {
                 icon: "💬",
               },
               {
+                label: "Maintenance Intelligence",
+                desc: "RCA + predictive schedule + risk-ranked assets",
+                page: "maintenance" as Page,
+                color: "from-amber-500/20 to-yellow-500/20 border-amber-500/30",
+                icon: "🔧",
+              },
+              {
                 label: "Compliance Gap Report",
                 desc: "2 critical gaps open — OISD-116 & Factory Act",
                 page: "compliance" as Page,
@@ -188,18 +287,11 @@ export default function Dashboard({ onNavigate }: Props) {
                 icon: "🛡️",
               },
               {
-                label: "Risk Scenario Analysis",
-                desc: "Model compound hazard scenarios",
-                page: "risk" as Page,
-                color: "from-orange-500/20 to-amber-500/20 border-orange-500/30",
-                icon: "⚡",
-              },
-              {
-                label: "Knowledge Graph Explorer",
-                desc: "Navigate 28 entities across 5 document types",
-                page: "graph" as Page,
-                color: "from-emerald-500/20 to-teal-500/20 border-emerald-500/30",
-                icon: "🕸️",
+                label: "Lessons Learned",
+                desc: "5 systemic failure patterns detected",
+                page: "lessons" as Page,
+                color: "from-violet-500/20 to-purple-500/20 border-violet-500/30",
+                icon: "📚",
               },
             ].map((action) => (
               <button
@@ -230,10 +322,10 @@ export default function Dashboard({ onNavigate }: Props) {
         </div>
         <div className="grid grid-cols-4 gap-3">
           {[
-            { label: "OISD-116", score: 84, color: "bg-green-500" },
+            { label: "OISD-116",    score: 84, color: "bg-green-500" },
             { label: "Factory Act", score: 73, color: "bg-amber-500" },
-            { label: "OISD-105", score: 67, color: "bg-red-500" },
-            { label: "DGMS", score: 80, color: "bg-blue-500" },
+            { label: "OISD-105",    score: 67, color: "bg-red-500" },
+            { label: "DGMS",        score: 80, color: "bg-blue-500" },
           ].map((item) => (
             <div key={item.label}>
               <div className="flex justify-between mb-1">

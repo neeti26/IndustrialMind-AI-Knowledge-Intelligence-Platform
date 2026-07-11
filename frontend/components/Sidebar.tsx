@@ -7,6 +7,9 @@ import {
   Flame,
   Brain,
   ChevronRight,
+  Wrench,
+  BookOpen,
+  FileText,
 } from "lucide-react";
 import type { Page } from "@/app/page";
 
@@ -16,11 +19,14 @@ interface Props {
 }
 
 const NAV = [
-  { id: "dashboard" as Page, icon: LayoutDashboard, label: "Dashboard", sub: "Overview" },
-  { id: "copilot" as Page, icon: MessageSquare, label: "AI Copilot", sub: "Ask anything" },
-  { id: "graph" as Page, icon: Network, label: "Knowledge Graph", sub: "Entity explorer" },
-  { id: "compliance" as Page, icon: ShieldAlert, label: "Compliance", sub: "Gap analysis" },
-  { id: "risk" as Page, icon: Flame, label: "Risk Intelligence", sub: "Hazard analysis" },
+  { id: "dashboard" as Page,   icon: LayoutDashboard, label: "Dashboard",         sub: "Overview" },
+  { id: "copilot" as Page,     icon: MessageSquare,   label: "AI Copilot",        sub: "Ask anything" },
+  { id: "graph" as Page,       icon: Network,         label: "Knowledge Graph",   sub: "Entity explorer" },
+  { id: "compliance" as Page,  icon: ShieldAlert,     label: "Compliance",        sub: "Gap analysis" },
+  { id: "risk" as Page,        icon: Flame,           label: "Risk Intelligence", sub: "Hazard analysis" },
+  { id: "maintenance" as Page, icon: Wrench,          label: "Maintenance Intel", sub: "Predictive + RCA" },
+  { id: "lessons" as Page,     icon: BookOpen,        label: "Lessons Learned",   sub: "Failure patterns" },
+  { id: "documents" as Page,   icon: FileText,        label: "Documents",         sub: "Upload & manage" },
 ];
 
 export default function Sidebar({ activePage, onNavigate }: Props) {
@@ -50,7 +56,7 @@ export default function Sidebar({ activePage, onNavigate }: Props) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 mt-2 space-y-1">
+      <nav className="flex-1 p-3 mt-2 space-y-0.5 overflow-y-auto scrollbar-thin">
         {NAV.map((item) => {
           const Icon = item.icon;
           const active = activePage === item.id;
@@ -81,14 +87,15 @@ export default function Sidebar({ activePage, onNavigate }: Props) {
           <span className="text-[10px] text-slate-500 uppercase tracking-wider">System Status</span>
           <span className="text-[10px] text-green-400 font-medium">Operational</span>
         </div>
-        <div className="grid grid-cols-3 gap-1 mt-2">
+        <div className="grid grid-cols-4 gap-1 mt-2">
           {[
-            { label: "RAG", ok: true },
+            { label: "RAG",   ok: true },
             { label: "Graph", ok: true },
-            { label: "AI", ok: true },
+            { label: "AI",    ok: true },
+            { label: "RCA",   ok: true },
           ].map((s) => (
             <div key={s.label} className="text-center py-1.5 rounded-md bg-white/5">
-              <span className={`text-[9px] font-bold uppercase ${s.ok ? "text-green-400" : "text-red-400"}`}>
+              <span className={`text-[8px] font-bold uppercase ${s.ok ? "text-green-400" : "text-red-400"}`}>
                 {s.ok ? "●" : "○"} {s.label}
               </span>
             </div>
