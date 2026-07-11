@@ -30,8 +30,9 @@ class ExtractedEntities:
 # ── PATTERNS ─────────────────────────────────────────────────────────────────
 
 # Equipment tags: P-101, HE-301, GD-303, V-101A, XV-301A, PSV-301, FIC-201
+# Must start with 1-3 uppercase letters (not 4, to avoid OISD, etc.) followed by dash and 3+ digits
 EQUIP_PATTERN = re.compile(
-    r'\b([A-Z]{1,4}-\d{3,4}[A-Z]?)\b'
+    r'(?<![A-Z])([A-Z]{1,3}-\d{3,4}[A-Z]?)(?!\d)(?<!\w-\d{4})'
 )
 
 # Work orders: WO-2024-1847, WO-YYYY-NNNN
@@ -75,9 +76,10 @@ DATE_PATTERN = re.compile(
     re.IGNORECASE
 )
 
-# People: Name followed by role or reporting context
+# People: Name followed by role or reporting context — require proper capitalized first+last names
 PEOPLE_PATTERN = re.compile(
-    r'(?:by|from|officer|supervisor|manager|inspector|engineer|technician)[:\s]+([A-Z][a-z]+\s+[A-Z][a-z]+)',
+    r'(?:by|from|officer|supervisor|manager|inspector|engineer|technician|reported by|investigated by)'
+    r'[:\s]+([A-Z][a-z]{2,}\s+[A-Z][a-z]{2,})',
     re.IGNORECASE
 )
 

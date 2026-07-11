@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import {
   Upload, FileText, CheckCircle2, AlertCircle, Loader2,
-  Database, File, RefreshCw, Trash2
+  Database, RefreshCw, Tag, Search, Cpu
 } from "lucide-react";
 import { apiGet, apiPost } from "@/lib/api";
 
@@ -17,13 +17,20 @@ interface IngestionStatus {
   ready: boolean;
 }
 
+interface ExtractedEntities {
+  equipment_tags: string[];
+  work_orders: string[];
+  incident_ids: string[];
+  regulations: string[];
+  chemicals: string[];
+  total_unique_entities: number;
+}
+
 interface UploadResult {
   status: string;
   filename: string;
-  ingestion: {
-    ingested: string[];
-    total_chunks: number;
-  };
+  ingestion: { ingested: string[]; total_chunks: number };
+  entities_extracted?: ExtractedEntities & { total_entities: number };
 }
 
 const DOC_TYPE_ICON: Record<string, string> = {
@@ -37,6 +44,9 @@ const SAMPLE_DOCS = [
   { filename: "oisd_116_extract.txt", size_kb: 2.9, type: "Regulatory Standard" },
   { filename: "work_orders_log.txt", size_kb: 2.1, type: "Work Order Log" },
   { filename: "regulatory_compliance_audit.txt", size_kb: 3.3, type: "Compliance Audit" },
+  { filename: "oem_manual_he301.txt", size_kb: 5.1, type: "OEM Manual" },
+  { filename: "sop_area3_emergency.txt", size_kb: 4.8, type: "Emergency SOP" },
+  { filename: "inspection_checklist_he301.txt", size_kb: 3.7, type: "Inspection Checklist" },
 ];
 
 export default function DocumentsPage() {
@@ -45,8 +55,10 @@ export default function DocumentsPage() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadMsg, setUploadMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [uploadEntities, setUploadEntities] = useState<UploadResult["entities_extracted"] | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [ingesting, setIngesting] = useState(false);
+  const [corpusEntities, setCorpusEntities] = useState<ExtractedEntities | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchDocs = async () => {
@@ -58,6 +70,11 @@ export default function DocumentsPage() {
       ]);
       setDocs(docRes.documents);
       setStatus(statusRes);
+      // Also fetch corpus entities
+      try {
+        const corpusRes = await apiGet<{ aggregate: ExtractedEntities }>("/documents/corpus-entities");
+        setCorpusEntities(corpusRes.aggregate);
+      } catch { /* backend offline — corpus entities not critical */ }
     } catch {
       // show static data if backend offline
     } finally {
@@ -93,6 +110,7 @@ export default function DocumentsPage() {
       if (!res.ok) throw new Error(await res.text());
       const result: UploadResult = await res.json();
       setUploadMsg({ type: "success", text: `"${result.filename}" uploaded and ingested. ${result.ingestion.total_chunks} chunks in vector store.` });
+      if (result.entities_extracted) setUploadEntities(result.entities_extracted);
       fetchDocs();
     } catch (e) {
       setUploadMsg({ type: "error", text: `Upload failed: ${String(e)}` });
@@ -264,6 +282,90 @@ export default function DocumentsPage() {
           })}
         </div>
       </div>
+
+      {/* Upload entity results */}
+      {uploadEntities && (
+        <div className="glass rounded-xl p-5 border border-emerald-500/20 bg-emerald-500/3">
+          <div className="flex items-center gap-2 mb-3">
+            <Cpu className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-sm font-semibold text-white">Entities Extracted from Upload</h3>
+            <span className="text-[10px] text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full border border-emerald-400/20">
+              {uploadEntities.total_entities} total
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[
+              { label: "Equipment Tags", items: uploadEntities.equipment_tags, color: "text-blue-400 bg-blue-400/10" },
+              { label: "Work Orders", items: uploadEntities.work_orders, color: "text-amber-400 bg-amber-400/10" },
+              { label: "Regulations", items: uploadEntities.regulations, color: "text-emerald-400 bg-emerald-400/10" },
+            ].map(cat => cat.items?.length ? (
+              <div key={cat.label}>
+                <p className="text-[9px] uppercase tracking-wider text-slate-500 mb-1.5">{cat.label}</p>
+                <div className="flex flex-wrap gap-1">
+                  {cat.items.map((item: string) => (
+                    <span key={item} className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${cat.color}`}>{item}</span>
+                  ))}
+                </div>
+              </div>
+            ) : null)}
+          </div>
+        </div>
+      )}
+
+      {/* Corpus-wide entities */}
+      {corpusEntities && (
+        <div className="glass rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Tag className="w-4 h-4 text-violet-400" />
+            <h3 className="text-sm font-semibold text-white">Corpus Entity Index</h3>
+            <span className="text-[10px] text-violet-400 bg-violet-400/10 px-2 py-0.5 rounded-full border border-violet-400/20">
+              {corpusEntities.total_unique_entities} unique entities
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {corpusEntities.equipment_tags?.length > 0 && (
+              <div>
+                <p className="text-[9px] uppercase tracking-wider text-slate-500 mb-2">⚙️ Equipment Tags ({corpusEntities.equipment_tags.length})</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {corpusEntities.equipment_tags.map(t => (
+                    <span key={t} className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-400/10 border border-blue-400/20 text-blue-300">{t}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {corpusEntities.work_orders?.length > 0 && (
+              <div>
+                <p className="text-[9px] uppercase tracking-wider text-slate-500 mb-2">🔧 Work Orders ({corpusEntities.work_orders.length})</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {corpusEntities.work_orders.map(w => (
+                    <span key={w} className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/20 text-amber-300">{w}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {corpusEntities.regulations?.length > 0 && (
+              <div>
+                <p className="text-[9px] uppercase tracking-wider text-slate-500 mb-2">📖 Regulations ({corpusEntities.regulations.length})</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {corpusEntities.regulations.slice(0, 8).map(r => (
+                    <span key={r} className="text-[10px] px-2 py-0.5 rounded bg-emerald-400/10 border border-emerald-400/20 text-emerald-300">{r}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {corpusEntities.chemicals?.length > 0 && (
+              <div>
+                <p className="text-[9px] uppercase tracking-wider text-slate-500 mb-2">⚗️ Chemicals ({corpusEntities.chemicals.length})</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {corpusEntities.chemicals.map(c => (
+                    <span key={c} className="text-[10px] font-mono px-2 py-0.5 rounded bg-orange-400/10 border border-orange-400/20 text-orange-300">{c}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Document type guide */}
       <div className="glass rounded-xl p-5 border border-white/5">
