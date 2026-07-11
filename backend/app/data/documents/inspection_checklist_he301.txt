@@ -1,0 +1,100 @@
+MONTHLY INSPECTION CHECKLIST — HEAT EXCHANGER HE-301
+Checklist No: INSP-HE301-MONTHLY-REV3
+Plant: Visakhapatnam Fertilizer Complex (VFC)
+Asset Tag: HE-301 | Equipment: Shell & Tube Heat Exchanger
+Area: Ammonia Synthesis Loop — Area 3
+Frequency: Monthly (minimum) — or weekly if any non-conformance detected
+
+INSPECTOR NAME: _________________ DATE: ___________ SHIFT: ________
+
+PART A — VISUAL INSPECTION (Walk-around, no entry required)
+
+1. Shell External Condition                             ☐ OK  ☐ NCR  ☐ N/A
+   - No corrosion, rust staining, or paint blistering visible
+   - Nameplate readable and attached
+   - Support structure intact with no cracks or deformation
+   NCR Description (if applicable): _________________________________
+
+2. Flanges and Gasket Condition                        ☐ OK  ☐ NCR  ☐ N/A
+   - No visible leakage stains on flange faces
+   - Flange bolts evenly tightened (visual check — no missing bolts)
+   - RTJ gasket alignment visually confirmed (gap <1 mm visible)
+   - Check with NH3 leak detector (pass at inlet/outlet flanges)
+   NCR Description (if applicable): _________________________________
+   NH3 Leak Reading (if any): _______ ppm    Location: _______________
+
+3. Insulation Condition                                ☐ OK  ☐ NCR  ☐ N/A
+   - No damaged or wet insulation (indicates external leak)
+   - Cladding sheets properly secured
+   NCR Description (if applicable): _________________________________
+
+4. Nozzle and Piping Connection                        ☐ OK  ☐ NCR  ☐ N/A
+   - Inlet nozzle DN150 (post-2022 modification) free from visible damage
+   - No vibration or movement observed at piping connections
+   NCR Description (if applicable): _________________________________
+
+5. Pressure and Temperature Gauges                     ☐ OK  ☐ NCR  ☐ N/A
+   - PI-301 (shell side pressure): _______ kg/cm²g (normal: 38–42)
+   - TI-301 (shell inlet temp): _______ °C (normal: 145–155)
+   - TI-302 (shell outlet temp): _______ °C
+   - PI-302 (tube side DP): _______ bar (normal: 0.3–0.6)
+   - All gauges readable and within calibration date
+   NCR Description (if applicable): _________________________________
+
+6. Safety Relief Valve PSV-301                         ☐ OK  ☐ NCR  ☐ N/A
+   - No discharge marks on PSV tail pipe
+   - PSV body and spring intact (visual check)
+   - Last test date: _____________ (must be within 12 months per OISD-116)
+   NCR Description (if applicable): _________________________________
+
+7. Block and Isolation Valves                          ☐ OK  ☐ NCR  ☐ N/A
+   - XV-301A (shell block) position: ☐ OPEN  ☐ CLOSED  ☐ INTERMEDIATE
+   - XV-301B (tube block) position: ☐ OPEN  ☐ CLOSED  ☐ INTERMEDIATE
+   - Valve stems free from leakage
+   NCR Description (if applicable): _________________________________
+
+8. Foundation and Anchor Bolts                         ☐ OK  ☐ NCR  ☐ N/A
+   - No cracks in concrete foundation
+   - All anchor bolts tight (tap test — no ringing sound)
+   NCR Description (if applicable): _________________________________
+
+9. Emergency Vent Valve EV-301                         ☐ OK  ☐ NCR  ☐ N/A
+   - Pneumatic actuator air supply confirmed (PI-EV301: _____ bar, normal: 6 bar)
+   - Fail-open function last tested: _____________ (test quarterly)
+   NCR Description (if applicable): _________________________________
+
+10. Area Gas Detector GD-303 (15m from HE-301)        ☐ OK  ☐ NCR  ☐ N/A
+    - Current reading: _______ ppm NH3 (normal: <5 ppm)
+    - Last calibration: _____________ (must be within 6 months)
+    - Sensor head clean, no obstruction
+    NCR Description (if applicable): _________________________________
+
+PART B — TRENDING ANALYSIS (Review DCS data)
+
+11. Shell Side Pressure Trend (Last 7 Days)            ☐ Stable  ☐ Rising  ☐ Falling
+    Average: _______ kg/cm²g | Std Dev: _______ | Max/Min: _______/_______
+    Alarm triggered in last 30 days? ☐ Yes  ☐ No   If yes, count: _______
+
+12. Tube Side Differential Pressure Trend              ☐ Stable  ☐ Rising  ☐ Falling
+    Average dP: _______ bar | Std Dev: _______ | Max/Min: _______/_______
+    ALERT: If dP rising trend >10% per month, suspect tube fouling → notify engineer
+
+13. Outlet Temperature Deviation                       ☐ Within ±5°C  ☐ Outside normal
+    Expected outlet temp (per design): _______ °C | Actual: _______ °C
+    If deviation >10°C, suspect tube fouling or shell bypass → notify engineer
+
+PART C — ACTION REQUIRED
+
+Total NCRs Identified: ______
+
+HIGH PRIORITY NCR (Immediate WO required):
+☐ NH3 leak detected (any concentration)
+☐ Pressure gauge reading outside normal range
+☐ Flange leakage visible
+☐ PSV overdue for test
+☐ Other: _______________________________________
+
+Work Order Raised (if any): WO- _____________ Priority: ☐ HIGH  ☐ MEDIUM  ☐ LOW
+
+INSPECTOR SIGNATURE: _________________________ DATE: _______________
+SHIFT SUPERVISOR APPROVAL: ___________________ DATE: _______________

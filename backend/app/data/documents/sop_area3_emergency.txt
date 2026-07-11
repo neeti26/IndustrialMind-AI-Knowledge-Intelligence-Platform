@@ -1,0 +1,82 @@
+STANDARD OPERATING PROCEDURE — EMERGENCY RESPONSE
+SOP No: SOP-VFC-EMERG-A3-REV5
+Plant: Visakhapatnam Fertilizer Complex (VFC)
+Area: Ammonia Synthesis Loop — Area 3
+Hazardous Material: Ammonia (NH3) | CAS: 7664-41-7
+Issue Date: 15-December-2024
+Approved by: Plant Safety Officer K. Prasad
+
+1. SCOPE
+This SOP governs emergency response procedures for all personnel in Area 3
+in the event of NH3 release, fire, explosion, or other process safety event.
+All shifts must conduct quarterly desktop drills on this procedure per
+Factory Act 1948 emergency preparedness requirement.
+
+2. NH3 RELEASE EMERGENCY LEVELS
+Level 1 — ALERT (25–49 ppm NH3 detected):
+- Notify Control Room immediately
+- Shift Supervisor evaluates source and determines corrective action
+- All hot work permits in Area 3 must be suspended immediately
+- Non-essential personnel leave Area 3
+- Emergency response team on standby
+
+Level 2 — ALARM (50–99 ppm NH3 detected):
+- Activate evacuation alarm (continuous siren)
+- Mandatory evacuation of Area 3 to assembly point (Parking Lot C)
+- Emergency response team enters Area 3 with SCBA (Self-Contained Breathing Apparatus)
+- Fire brigade notified
+- Wind sock checked — evacuate downwind personnel from adjacent areas
+- NH3 water curtains activated (manual valve MV-A3-WC01)
+
+Level 3 — EMERGENCY (≥100 ppm NH3 detected or visible plume):
+- Activate plant-wide emergency siren (pulsating)
+- Full plant evacuation ordered
+- External emergency services notified (Fire Brigade, District Emergency Officer)
+- Emergency Operations Center (EOC) activated
+- Public alert via plant loudspeaker and SMS to nearby villages (within 1 km radius)
+- Isolate all NH3 sources — emergency shutdown of ammonia synthesis loop
+- Deploy foam blankets if NH3 plume near flammable material zones
+
+3. EQUIPMENT FAILURE EMERGENCY (HE-301 SPECIFIC)
+If HE-301 catastrophic failure (shell rupture, massive flange leak):
+- Activate Level 2 or Level 3 response based on GD-303 reading
+- Close isolation valves XV-301A (shell side) and XV-301B (tube side)
+- Open emergency vent EV-301 to route NH3 to flare (control room activates remotely)
+- Do not attempt manual valve operation if NH3 concentration >25 ppm without SCBA
+- HE-301 is in direct line-of-sight from Control Room — visual confirmation mandatory
+
+4. EVACUATION ROUTES
+Primary Route: Main access road east toward admin building → Assembly Point Parking Lot C
+Secondary Route: Emergency exit west toward perimeter fence gate G-3 → Assembly Point Fire Station
+
+CRITICAL: Move perpendicular to wind direction, not downwind. Check wind sock
+at Area 3 entrance before evacuating.
+
+5. PERSONNEL PROTECTIVE EQUIPMENT (PPE)
+All personnel in Area 3 must have personal NH3 escape respirator within 10 meters
+at all times. Escape respirators located at ER-A3-01, ER-A3-02, ER-A3-03 (marked
+with green strobe lights). SCBA required for entry into NH3 concentration >25 ppm.
+
+6. EMERGENCY CONTACT NUMBERS
+Control Room: Extension 100 | Mobile: +91-891-CONTROL
+Plant Safety Officer: +91-891-PSO-CELL
+Fire Brigade (Internal): Extension 101
+Fire Brigade (External Visakhapatnam): 101
+District Emergency Officer: +91-891-DISTRICT
+DISH (Directorate of Industrial Safety & Health): +91-891-DISH-OFFICE
+
+7. POST-EMERGENCY ACTIONS
+All Level 2 and Level 3 events require:
+- Incident investigation per IR-TEMPLATE-001 within 24 hours
+- DISH notification within 48 hours per Factory Act Section 88A
+- Root cause analysis within 7 days
+- Public report to District Magistrate if external evacuation triggered
+
+8. TRAINING AND DRILL REQUIREMENTS
+- Annual full-scale NH3 release drill (all shifts participate)
+- Quarterly desktop emergency drill
+- Monthly check of emergency equipment (SCBA, escape respirators, water curtains, GD-303)
+- New hires must complete emergency response training within 7 days of joining
+
+NOTE: Last full-scale drill: June 2023 (18 months ago) — OVERDUE per MNC-2024-04.
+Next scheduled drill: February 2025.

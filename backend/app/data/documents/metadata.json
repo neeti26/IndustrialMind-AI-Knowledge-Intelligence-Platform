@@ -38,5 +38,29 @@
     "plant": "VFC",
     "last_updated": "2024-10-15",
     "criticality": "HIGH"
+  },
+  {
+    "filename": "oem_manual_he301.txt",
+    "doc_type": "OEM Manual",
+    "asset_tag": "HE-301",
+    "plant": "VFC",
+    "last_updated": "2022-03-15",
+    "criticality": "HIGH"
+  },
+  {
+    "filename": "sop_area3_emergency.txt",
+    "doc_type": "Emergency SOP",
+    "asset_tag": "ALL",
+    "plant": "VFC",
+    "last_updated": "2024-12-15",
+    "criticality": "SAFETY_CRITICAL"
+  },
+  {
+    "filename": "inspection_checklist_he301.txt",
+    "doc_type": "Inspection Checklist",
+    "asset_tag": "HE-301",
+    "plant": "VFC",
+    "last_updated": "2024-12-01",
+    "criticality": "HIGH"
   }
 ]

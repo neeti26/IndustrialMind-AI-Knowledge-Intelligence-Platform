@@ -1,0 +1,72 @@
+OEM TECHNICAL MANUAL — SHELL AND TUBE HEAT EXCHANGER HE-301
+Manufacturer: Thermax Limited, Pune, India
+Model: HE-301-S&T-NH3-2019
+Serial Number: THX-2019-VFC-0443
+Plant: Visakhapatnam Fertilizer Complex (VFC)
+Unit: Ammonia Synthesis Loop — Area 3
+Year of Manufacture: 2019
+TEMA Type: AES (Fixed Tube Sheet)
+Fluid Service: Ammonia process gas / cooling water (shell/tube sides)
+
+1. DESIGN DATA
+Shell Side (Process NH3): Design Pressure: 45 kg/cm²g | Design Temperature: 180°C
+Tube Side (Cooling Water): Design Pressure: 8 kg/cm²g | Design Temperature: 60°C
+Shell Material: SA-516 Gr.70 carbon steel
+Tube Material: SA-179 low carbon steel (seamless)
+Tube OD x Thickness: 25.4 mm x 2.11 mm BWG 14
+Number of Tubes: 412
+Tube Length: 4.5 m
+Heat Transfer Area: 125 m²
+Shell ID: 600 mm
+Design Code: ASME Section VIII Div. 1, TEMA Class R (refinery/chemical service)
+Corrosion Allowance: 3.0 mm (shell), 1.5 mm (tubes)
+
+2. 2022 CIRCUIT REVAMP — MODIFICATION RECORD
+Date of Modification: March 2022
+Modification Reference: MOD-2022-HE301-REV1
+Change Description: Inlet nozzle upsized from DN100 to DN150 to accommodate
+increased flow rate following ammonia synthesis loop capacity expansion (from
+1200 MT/day to 1450 MT/day). Inlet flange gasket changed from spiral wound
+(SW-304-FG) to ring joint (RTJ-R49) type.
+P&ID Revision: P&ID-VFC-A3-REV7 (issued March 2022)
+HAZOP Action Required: Full HAZOP revalidation of HE-301 circuit recommended
+due to flow regime and pressure drop changes. HAZOP OUTSTANDING — CNC-2022-07.
+WARNING: Operating this equipment without updated HAZOP documentation increases
+risk of undetected hazard pathways introduced by the nozzle upsizing.
+
+3. INSPECTION AND MAINTENANCE REQUIREMENTS
+3.1 Shell inspection per ASME PCC-2 — maximum 12 months between inspections
+3.2 Tube bundle pull-out inspection — every 3 years or following any abnormal
+    pressure differential (>10% above design DP)
+3.3 Flange gasket inspection — every 6 months for NH3 service (OISD-116 Sec 18.2)
+3.4 Wall thickness measurement by UT (ultrasonic testing) — 20% sample each year
+3.5 MINIMUM WALL THICKNESS ALERT: Original tube wall 2.11 mm. Calculated minimum
+    allowable wall at design pressure: 1.45 mm. If any tube measurement falls
+    below 1.6 mm, take tube out of service immediately.
+
+4. OPERATING LIMITS
+Normal Operating Pressure (shell): 38–42 kg/cm²g
+Normal Operating Temperature (shell inlet): 145–155°C
+Maximum allowable NH3 leakage rate: zero tolerance — any detected leak requires
+immediate work order per OISD-116 Section 7 and plant LOTO procedure.
+
+5. KNOWN FAILURE MODES
+5.1 Flange gasket leakage — primary failure mode for this service (RTJ gaskets
+    susceptible to relaxation under thermal cycling). Inspection interval CRITICAL.
+5.2 Tube sheet cracking — documented in 2021 (repaired under WO-2021-0445).
+    Monitor with PT/MT testing during each shutdown.
+5.3 Inlet nozzle erosion — increased risk following 2022 upsizing due to higher
+    velocity. Inspect nozzle bore at each shutdown.
+5.4 Waterside fouling — cooling tower water hardness causes calcium carbonate
+    deposits on tube ID. Chemical cleaning required if tube-side DP increases >15%.
+
+6. SPARE PARTS (CRITICAL)
+RTJ Gasket R49 (Soft Iron): Minimum 4 units in store at all times — VFC Stock Code: SP-HE301-G01
+Tube bundle gasket set: 2 sets — VFC Stock Code: SP-HE301-G02
+Tie rod complete set: 1 set — VFC Stock Code: SP-HE301-TR01
+Thermocouple assembly (shell side): 2 units — VFC Stock Code: SP-HE301-TC01
+
+7. EMERGENCY ISOLATION
+Emergency isolation: Close XV-301A (shell side block valve) and XV-301B (tube side block valve).
+NH3 vent to flare via EV-301 (pneumatic vent valve, fail-open on loss of instrument air).
+Location of block valves: See P&ID-VFC-A3-REV7, Sheet 3.
