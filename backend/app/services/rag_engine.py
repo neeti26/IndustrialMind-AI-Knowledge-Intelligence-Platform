@@ -64,6 +64,13 @@ def ingest_documents(documents_dir: Optional[str] = None) -> dict:
             if not text.strip():
                 skipped.append(filepath.name)
                 continue
+            # Extract entities from full document text to enrich metadata
+            try:
+                from app.services import entity_extractor
+                doc_entities = entity_extractor.extract_entities(text, file_meta.get("doc_type", None))
+                doc_entities = entity_extractor.entities_to_dict(doc_entities)
+            except Exception:
+                doc_entities = {}
 
             chunks = _chunk_text(text, chunk_size=800, overlap=100)
             file_meta = metadata_index.get(filepath.name, {})
@@ -80,6 +87,7 @@ def ingest_documents(documents_dir: Optional[str] = None) -> dict:
                     "asset_tag": file_meta.get("asset_tag", ""),
                     "plant": file_meta.get("plant", ""),
                     "criticality": file_meta.get("criticality", ""),
+                    "extracted_entities": doc_entities,
                 })
 
             collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
@@ -97,15 +105,24 @@ def ingest_documents(documents_dir: Optional[str] = None) -> dict:
 
 
 def _read_file(filepath: Path) -> str:
-    if filepath.suffix.lower() == ".pdf":
+    # Delegate robust reading (pdf text extraction + OCR fallback) to document_processor
+    try:
+        from app.services import document_processor
+        return document_processor.read_text(str(filepath))
+    except Exception:
+        # Fallback: attempt pypdf then plain text
+        if filepath.suffix.lower() == ".pdf":
+            try:
+                import pypdf
+                reader = pypdf.PdfReader(str(filepath))
+                return "\n".join(page.extract_text() or "" for page in reader.pages)
+            except Exception:
+                return ""
         try:
-            import pypdf
-            reader = pypdf.PdfReader(str(filepath))
-            return "\n".join(page.extract_text() or "" for page in reader.pages)
+            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                return f.read()
         except Exception:
             return ""
-    with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
-        return f.read()
 
 
 def _chunk_text(text: str, chunk_size: int = 800, overlap: int = 100) -> list[str]:
