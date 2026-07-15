@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 import os
 
 from app.routers import documents, query, graph, intelligence
+from app.routers import integrations
 from app.services import rag_engine
 from app.config import get_settings
 
@@ -88,6 +89,7 @@ app.include_router(documents.router)
 app.include_router(query.router)
 app.include_router(graph.router)
 app.include_router(intelligence.router)
+app.include_router(integrations.router)
 
 
 @app.get("/")
