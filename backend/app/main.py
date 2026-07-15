@@ -44,6 +44,46 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# Simple API key auth + audit logging middleware
+@app.middleware("http")
+async def auth_and_audit(request, call_next):
+    from time import time
+    from datetime import datetime
+    from app.config import get_settings
+    settings = get_settings()
+
+    # allow public health and root
+    public_paths = {"/", "/health", "/docs", "/openapi.json"}
+    path = request.url.path
+    if any(path.startswith(p) for p in public_paths):
+        resp = await call_next(request)
+        return resp
+
+    if settings.enable_auth:
+        key = request.headers.get("X-API-KEY") or request.query_params.get("api_key")
+        if not key or key != settings.api_key:
+            from fastapi.responses import JSONResponse
+            return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    start = time()
+    response = await call_next(request)
+    elapsed = time() - start
+
+    # Audit log
+    try:
+        log_path = settings.audit_log_path
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+        with open(log_path, "a", encoding="utf-8") as f:
+            ak = (request.headers.get("X-API-KEY") or "-")
+            ak_mask = ak[:4] + "..." if ak and len(ak) > 6 else ak
+            entry = f"{datetime.utcnow().isoformat()}Z\t{request.client.host if request.client else '-'}\t{request.method}\t{path}\t{response.status_code}\t{elapsed:.3f}s\t{ak_mask}\n"
+            f.write(entry)
+    except Exception:
+        pass
+
+    return response
+
 app.include_router(documents.router)
 app.include_router(query.router)
 app.include_router(graph.router)

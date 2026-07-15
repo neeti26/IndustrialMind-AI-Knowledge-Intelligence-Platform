@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     model_provider: str = "openai"  # "openai" or "groq"
     chroma_persist_dir: str = "./chroma_db"
     documents_dir: str = "./app/data/documents"
+    api_key: str = ""  # simple API key for server-to-server auth (X-API-KEY)
+    audit_log_path: str = "./logs/audit.log"
+    enable_auth: bool = False
 
     class Config:
         env_file = ".env"

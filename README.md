@@ -149,6 +149,26 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
 Set the same environment variables in the deployment platform.
 
+### Docker (local)
+
+You can run the backend locally in Docker using the included `docker-compose.yml`.
+
+Create a `.env` file at repository root with at least:
+
+```env
+OPENAI_API_KEY=sk-...
+API_KEY=your-secret-api-key
+```
+
+Then:
+
+```bash
+docker-compose up --build
+```
+
+The backend will be available at `http://localhost:8000`. The API requires `X-API-KEY`
+header when `enable_auth=true` is set in the backend `.env`.
+
 ## Tech stack
 
 - Frontend: Next.js, TypeScript, Tailwind CSS, Framer Motion, React Markdown
