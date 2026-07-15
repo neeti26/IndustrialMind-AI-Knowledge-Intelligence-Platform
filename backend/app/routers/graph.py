@@ -51,6 +51,16 @@ async def get_graph_stats():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.post("/rebuild-from-corpus")
+async def rebuild_graph_from_corpus():
+    """Rebuild the knowledge graph automatically from the documents corpus."""
+    try:
+        G = kg.build_graph_from_corpus()
+        return {"status": "ok", "nodes": G.number_of_nodes(), "edges": G.number_of_edges()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/nodes")
 async def get_nodes_by_type(node_type: Optional[str] = None):
     """Return nodes filtered by type."""

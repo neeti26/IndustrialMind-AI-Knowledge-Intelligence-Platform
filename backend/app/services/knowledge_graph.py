@@ -377,3 +377,63 @@ def get_graph_stats() -> dict:
             1 for _, d in G.nodes(data=True) if d.get("type") == "Hazard"
         ),
     }
+
+
+def build_graph_from_corpus(documents_dir: Optional[str] = None) -> nx.DiGraph:
+    """Build a knowledge graph automatically from extracted entities in the documents directory.
+
+    This is a light-weight constructor: it creates Document nodes and entity nodes
+    for equipment, work orders, incidents, regulations and links them with `CONTAINS`/`DESCRIBES` edges.
+    """
+    docs_dir = documents_dir or os.path.join(os.path.dirname(__file__), "../data/documents")
+    G = nx.DiGraph()
+    try:
+        from app.services import document_processor, entity_extractor
+    except Exception:
+        return G
+
+    for fname in os.listdir(docs_dir):
+        if not fname.endswith((".txt", ".pdf")) or fname == "metadata.json":
+            continue
+        fpath = os.path.join(docs_dir, fname)
+        text = document_processor.read_text(fpath)
+        entities = document_processor.extract_entities_from_text(text, entity_extractor, source=fname)
+
+        # Document node
+        doc_node = f"DOC-{Path(fname).stem}"
+        G.add_node(doc_node, type="Document", label=Path(fname).stem, filename=fname, doc_type=entities.get("doc_type"))
+
+        # Equipment
+        for eq in entities.get("equipment_tags", []):
+            if not G.has_node(eq):
+                G.add_node(eq, type="Equipment", label=eq)
+            G.add_edge(doc_node, eq, relation="DESCRIBES")
+
+        # Work Orders
+        for wo in entities.get("work_orders", []):
+            if not G.has_node(wo):
+                G.add_node(wo, type="WorkOrder", label=wo)
+            G.add_edge(doc_node, wo, relation="CONTAINS")
+
+        # Incidents
+        for ir in entities.get("incident_ids", []):
+            if not G.has_node(ir):
+                G.add_node(ir, type="Incident", label=ir)
+            G.add_edge(doc_node, ir, relation="DOCUMENTS")
+
+        # Regulations & compliance ids
+        for reg in entities.get("regulations", []):
+            nid = reg if len(reg) < 40 else f"REG-{hash(reg) % 100000}"
+            if not G.has_node(nid):
+                G.add_node(nid, type="Regulation", label=reg)
+            G.add_edge(doc_node, nid, relation="REFERENCES")
+
+        for cid in entities.get("compliance_ids", []) + entities.get("permit_ids", []):
+            if not G.has_node(cid):
+                G.add_node(cid, type="ComplianceFinding", label=cid)
+            G.add_edge(doc_node, cid, relation="IDENTIFIES")
+
+    # Replace singleton graph
+    global _graph
+    _graph = G
+    return G

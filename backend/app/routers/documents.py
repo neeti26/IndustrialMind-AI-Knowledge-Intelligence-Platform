@@ -76,6 +76,30 @@ async def list_documents():
     return {"documents": docs, "total": len(docs)}
 
 
+@router.get("/preview-extract")
+async def preview_extract():
+    """Return extracted entities for each document without ingesting.
+
+    Useful for validating OCR/entity extraction before committing to ingestion.
+    """
+    docs_dir = settings.documents_dir
+    if not os.path.exists(docs_dir):
+        return {"documents": [], "total": 0}
+
+    results = []
+    from app.services import document_processor, entity_extractor
+
+    for fname in os.listdir(docs_dir):
+        if not fname.endswith((".txt", ".pdf")) or fname == "metadata.json":
+            continue
+        fpath = os.path.join(docs_dir, fname)
+        text = document_processor.read_text(fpath)
+        entities = document_processor.extract_entities_from_text(text, entity_extractor, source=fname)
+        results.append({"filename": fname, "entities": entities})
+
+    return {"documents": results, "total": len(results)}
+
+
 @router.post("/extract-entities")
 async def extract_entities_from_text(payload: dict):
     """Extract industrial entities from provided text."""
