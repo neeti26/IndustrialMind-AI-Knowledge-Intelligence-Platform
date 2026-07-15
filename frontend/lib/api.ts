@@ -9,9 +9,19 @@ function getBaseUrl(): string {
   return "/api/proxy";
 }
 
+function getAuthHeaders(): Record<string, string> {
+  if (isServer) return {};
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    return { "Authorization": `Bearer ${token}` };
+  }
+  return {};
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   const base = getBaseUrl();
-  const res = await fetch(`${base}${path}`, { cache: "no-store" });
+  const headers = getAuthHeaders();
+  const res = await fetch(`${base}${path}`, { cache: "no-store", headers });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`API ${res.status}: ${text}`);
@@ -33,9 +43,10 @@ export async function rebuildGraph(): Promise<any> {
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const base = getBaseUrl();
+  const headers = { "Content-Type": "application/json", ...getAuthHeaders() };
   const res = await fetch(`${base}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(body),
     cache: "no-store",
   });
@@ -50,8 +61,10 @@ export async function uploadCMMS(file: File): Promise<any> {
   const base = getBaseUrl();
   const fd = new FormData();
   fd.append('file', file, file.name);
+  const headers = getAuthHeaders();
   const res = await fetch(`${base}/integrations/cmms/upload`, {
     method: 'POST',
+    headers,
     body: fd,
   });
   if (!res.ok) {

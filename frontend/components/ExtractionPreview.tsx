@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { previewExtract, ingestDryrun, rebuildGraph } from "@/lib/api";
+import { previewExtract, ingestDryrun, rebuildGraph, uploadCMMS } from "@/lib/api";
 
 export default function ExtractionPreview() {
     const [results, setResults] = useState<any[] | null>(null);

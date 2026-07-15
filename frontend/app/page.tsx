@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Dashboard from "@/components/Dashboard";
 import CopilotPage from "@/components/CopilotPage";
@@ -14,20 +15,46 @@ import ExtractionPreview from "@/components/ExtractionPreview";
 export type Page = "dashboard" | "copilot" | "graph" | "compliance" | "risk" | "maintenance" | "lessons" | "documents" | "extraction";
 
 export default function Home() {
+  const router = useRouter();
   const [activePage, setActivePage] = useState<Page>("dashboard");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check auth on mount
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      setIsAuthenticated(true);
+      setLoading(false);
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-slate-400">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const renderPage = () => {
     switch (activePage) {
-      case "dashboard":    return <Dashboard onNavigate={setActivePage} />;
-      case "copilot":      return <CopilotPage />;
-      case "graph":        return <GraphPage />;
-      case "compliance":   return <CompliancePage />;
-      case "risk":         return <RiskPage />;
-      case "maintenance":  return <MaintenancePage />;
-      case "lessons":      return <LessonsPage />;
-      case "documents":    return <DocumentsPage />;
-      case "extraction":   return <ExtractionPreview />;
-      default:             return <Dashboard onNavigate={setActivePage} />;
+      case "dashboard": return <Dashboard onNavigate={setActivePage} />;
+      case "copilot": return <CopilotPage />;
+      case "graph": return <GraphPage />;
+      case "compliance": return <CompliancePage />;
+      case "risk": return <RiskPage />;
+      case "maintenance": return <MaintenancePage />;
+      case "lessons": return <LessonsPage />;
+      case "documents": return <DocumentsPage />;
+      case "extraction": return <ExtractionPreview />;
+      default: return <Dashboard onNavigate={setActivePage} />;
     }
   };
 
