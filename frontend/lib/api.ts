@@ -19,6 +19,18 @@ export async function apiGet<T>(path: string): Promise<T> {
   return res.json();
 }
 
+export async function previewExtract(): Promise<any> {
+  return apiGet('/documents/preview-extract');
+}
+
+export async function ingestDryrun(limit_per_file = 3): Promise<any> {
+  return apiGet(`/documents/ingest-dryrun?limit_per_file=${limit_per_file}`);
+}
+
+export async function rebuildGraph(): Promise<any> {
+  return apiPost('/graph/rebuild-from-corpus', {});
+}
+
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const base = getBaseUrl();
   const res = await fetch(`${base}${path}`, {

@@ -175,6 +175,24 @@ def retrieve(query: str, n_results: int = 6, filter_doc_type: Optional[str] = No
     return chunks
 
 
+def get_document_chunks(filepath: str, chunk_size: int = 800, overlap: int = 100) -> list[dict]:
+    """Return chunks for a document file without inserting into the collection.
+
+    Each chunk includes content and minimal metadata.
+    """
+    text = _read_file(Path(filepath))
+    if not text:
+        return []
+    chunks = _chunk_text(text, chunk_size=chunk_size, overlap=overlap)
+    out = []
+    for i, c in enumerate(chunks):
+        out.append({
+            "content": c,
+            "metadata": {"filename": Path(filepath).name, "chunk_index": i, "total_chunks": len(chunks)},
+        })
+    return out
+
+
 def get_ingestion_status() -> dict:
     collection = _get_collection()
     return {

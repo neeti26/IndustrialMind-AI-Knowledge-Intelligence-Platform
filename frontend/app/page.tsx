@@ -9,8 +9,9 @@ import RiskPage from "@/components/RiskPage";
 import MaintenancePage from "@/components/MaintenancePage";
 import LessonsPage from "@/components/LessonsPage";
 import DocumentsPage from "@/components/DocumentsPage";
+import ExtractionPreview from "@/components/ExtractionPreview";
 
-export type Page = "dashboard" | "copilot" | "graph" | "compliance" | "risk" | "maintenance" | "lessons" | "documents";
+export type Page = "dashboard" | "copilot" | "graph" | "compliance" | "risk" | "maintenance" | "lessons" | "documents" | "extraction";
 
 export default function Home() {
   const [activePage, setActivePage] = useState<Page>("dashboard");
@@ -25,6 +26,7 @@ export default function Home() {
       case "maintenance":  return <MaintenancePage />;
       case "lessons":      return <LessonsPage />;
       case "documents":    return <DocumentsPage />;
+      case "extraction":   return <ExtractionPreview />;
       default:             return <Dashboard onNavigate={setActivePage} />;
     }
   };

@@ -100,6 +100,36 @@ async def preview_extract():
     return {"documents": results, "total": len(results)}
 
 
+@router.get("/ingest-dryrun")
+async def ingest_dryrun(limit_per_file: int = 3):
+    """Return chunked content and extracted entities for each document without ingesting.
+
+    Query params:
+    - limit_per_file: number of chunks to return per file
+    """
+    docs_dir = settings.documents_dir
+    if not os.path.exists(docs_dir):
+        return {"documents": [], "total": 0}
+
+    results = []
+    from app.services import document_processor, entity_extractor, rag_engine
+
+    for fname in os.listdir(docs_dir):
+        if not fname.endswith((".txt", ".pdf")) or fname == "metadata.json":
+            continue
+        fpath = os.path.join(docs_dir, fname)
+        text = document_processor.read_text(fpath)
+        entities = document_processor.extract_entities_from_text(text, entity_extractor, source=fname)
+        chunks = rag_engine.get_document_chunks(fpath)
+        results.append({
+            "filename": fname,
+            "entities": entities,
+            "chunks": chunks[:limit_per_file]
+        })
+
+    return {"documents": results, "total": len(results)}
+
+
 @router.post("/extract-entities")
 async def extract_entities_from_text(payload: dict):
     """Extract industrial entities from provided text."""

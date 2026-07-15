@@ -27,6 +27,7 @@ const NAV = [
   { id: "maintenance" as Page, icon: Wrench,          label: "Maintenance Intel", sub: "Predictive + RCA" },
   { id: "lessons" as Page,     icon: BookOpen,        label: "Lessons Learned",   sub: "Failure patterns" },
   { id: "documents" as Page,   icon: FileText,        label: "Documents",         sub: "Upload & manage" },
+  { id: "extraction" as Page,  icon: FileText,        label: "Extraction",        sub: "Preview & rebuild" },
 ];
 
 export default function Sidebar({ activePage, onNavigate }: Props) {
