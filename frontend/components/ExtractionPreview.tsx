@@ -42,6 +42,25 @@ export default function ExtractionPreview() {
         }
     };
 
+    const [uploading, setUploading] = useState(false);
+    const [uploadResult, setUploadResult] = useState<any>(null);
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        setUploading(true);
+        try {
+            const res = await uploadCMMS(f as File);
+            setUploadResult(res);
+            alert(`Uploaded ${f.name}: ${res.ingested_work_orders} WOs ingested.`);
+        } catch (err) {
+            setUploadResult({ error: String(err) });
+            alert('Upload failed: ' + String(err));
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
         <div className="p-4 space-y-3">
             <div className="flex gap-2">
@@ -51,6 +70,11 @@ export default function ExtractionPreview() {
             </div>
 
             <div className="max-h-[60vh] overflow-y-auto">
+                <div className="mb-3">
+                    <label className="text-xs text-slate-400">Upload CMMS CSV:</label>
+                    <input type="file" accept=".csv" onChange={handleUpload} className="ml-2" />
+                    {uploading && <span className="text-xs text-slate-400 ml-2">Uploading…</span>}
+                </div>
                 {loading && <p className="text-sm text-slate-400">Loading…</p>}
                 {!loading && results && (
                     <div className="space-y-4">
@@ -68,7 +92,15 @@ export default function ExtractionPreview() {
                                             <details className="mt-2 text-xs text-slate-400">
                                                 <summary>Chunks ({r.chunks.length})</summary>
                                                 {r.chunks.map((c: any, i: number) => (
-                                                    <pre key={i} className="whitespace-pre-wrap text-[11px] mt-2">{c.content.slice(0, 400)}{c.content.length > 400 ? '…' : ''}</pre>
+                                                    <div key={i} className="mt-2">
+                                                        <pre className="whitespace-pre-wrap text-[11px]">{c.content.slice(0, 400)}{c.content.length > 400 ? '…' : ''}</pre>
+                                                        {c.metadata && c.metadata.extracted_entities && (
+                                                            <div className="text-[11px] text-slate-300 mt-1">
+                                                                <p><strong>Chunk Entities:</strong> {JSON.stringify(c.metadata.extracted_entities)}</p>
+                                                                {c.metadata.page_number && <p><strong>Page:</strong> {c.metadata.page_number}</p>}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 ))}
                                             </details>
                                         )}

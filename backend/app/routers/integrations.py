@@ -30,4 +30,14 @@ async def upload_cmms(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+    # Audit the upload
+    try:
+        from app.config import get_settings
+        settings = get_settings()
+        os.makedirs(os.path.dirname(settings.audit_log_path), exist_ok=True)
+        with open(settings.audit_log_path, "a", encoding="utf-8") as f:
+            f.write(f"UPLOAD\tCMMS\t{file.filename}\t{len(wos)} WOs\n")
+    except Exception:
+        pass
+
     return {"status": "ok", "ingested_work_orders": len(wos), "nodes_added": added}

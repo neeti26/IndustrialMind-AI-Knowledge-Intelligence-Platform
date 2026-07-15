@@ -46,6 +46,21 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return res.json();
 }
 
+export async function uploadCMMS(file: File): Promise<any> {
+  const base = getBaseUrl();
+  const fd = new FormData();
+  fd.append('file', file, file.name);
+  const res = await fetch(`${base}/integrations/cmms/upload`, {
+    method: 'POST',
+    body: fd,
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`API ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
 // ── API Response Types ─────────────────────────────────────────────────────
 
 export interface QueryResponse {

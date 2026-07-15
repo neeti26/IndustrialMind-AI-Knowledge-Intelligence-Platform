@@ -180,15 +180,61 @@ def get_document_chunks(filepath: str, chunk_size: int = 800, overlap: int = 100
 
     Each chunk includes content and minimal metadata.
     """
+    # Attempt to get per-page texts for PDFs to provide page provenance
+    try:
+        from app.services import document_processor, entity_extractor
+    except Exception:
+        document_processor = None
+        entity_extractor = None
+
+    pages = None
+    if document_processor:
+        try:
+            pages = document_processor.read_pdf_pages(str(filepath))
+        except Exception:
+            pages = None
+
+    out = []
+    if pages:
+        # chunk per page and include page_number
+        for p_idx, p_text in enumerate(pages):
+            p_chunks = _chunk_text(p_text, chunk_size=chunk_size, overlap=overlap)
+            for i, c in enumerate(p_chunks):
+                extracted = {}
+                try:
+                    if entity_extractor:
+                        ent = entity_extractor.extract_entities(c, None)
+                        extracted = entity_extractor.entities_to_dict(ent)
+                except Exception:
+                    extracted = {}
+                out.append({
+                    "content": c,
+                    "metadata": {
+                        "filename": Path(filepath).name,
+                        "chunk_index": i,
+                        "page_number": p_idx + 1,
+                        "total_chunks": len(p_chunks),
+                        "extracted_entities": extracted,
+                    },
+                })
+        return out
+
+    # Fallback: treat whole text as before
     text = _read_file(Path(filepath))
     if not text:
         return []
     chunks = _chunk_text(text, chunk_size=chunk_size, overlap=overlap)
-    out = []
     for i, c in enumerate(chunks):
+        extracted = {}
+        try:
+            if entity_extractor:
+                ent = entity_extractor.extract_entities(c, None)
+                extracted = entity_extractor.entities_to_dict(ent)
+        except Exception:
+            extracted = {}
         out.append({
             "content": c,
-            "metadata": {"filename": Path(filepath).name, "chunk_index": i, "total_chunks": len(chunks)},
+            "metadata": {"filename": Path(filepath).name, "chunk_index": i, "total_chunks": len(chunks), "extracted_entities": extracted},
         })
     return out
 

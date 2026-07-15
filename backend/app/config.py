@@ -11,6 +11,12 @@ class Settings(BaseSettings):
     api_key: str = ""  # simple API key for server-to-server auth (X-API-KEY)
     audit_log_path: str = "./logs/audit.log"
     enable_auth: bool = False
+    # JWT / RBAC
+    jwt_secret: str = "change-me-secret"
+    jwt_algo: str = "HS256"
+    jwt_exp_seconds: int = 3600
+    admin_user: str = "admin"
+    admin_password: str = "admin"
 
     class Config:
         env_file = ".env"
