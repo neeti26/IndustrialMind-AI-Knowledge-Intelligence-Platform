@@ -1,41 +1,89 @@
 # IndustrialMind — AI Knowledge Intelligence Platform
 
-> ET AI Hackathon 2.0 — Problem Statement 8: AI for Industrial Knowledge Intelligence
+IndustrialMind is an industrial operations intelligence platform designed to turn fragmented plant knowledge into actionable decision support. It connects maintenance procedures, incident reports, work orders, compliance findings, and regulatory standards into a single reasoning layer that can answer operational questions, surface regulatory exposure, and highlight compound safety risks.
 
-## What It Does
+This repository is not a toy chatbot demo. It contains a working prototype with a FastAPI backend, a Next.js frontend, vector-based document retrieval, a knowledge graph, and multiple intelligence modules for compliance, RCA, and maintenance planning.
 
-IndustrialMind is an AI-powered platform that unifies fragmented industrial documents — maintenance procedures, incident reports, work orders, regulatory standards (OISD-116, Factory Act 1948), and compliance audits — into a queryable, actionable intelligence layer.
+> Origin: ET AI Hackathon 2.0 — Problem Statement 8: AI for Industrial Knowledge Intelligence
 
-**Key Capabilities:**
-- **AI Copilot** — RAG-powered conversational agent that answers operational, maintenance, and engineering queries with source citations
-- **Knowledge Graph** — Interactive visualization of 28+ entities (equipment, work orders, incidents, permits, regulations, hazards) and their relationships
-- **Compliance Intelligence** — Real-time compliance gap tracking against OISD-116, Factory Act 1948, OISD-105, and DGMS standards
-- **Compound Risk Detection** — Identifies dangerous combinations that single-sensor/single-document views miss (e.g., active hot work permit + sub-threshold NH3 readings + zero critical spare stock)
-- **Risk Scenario Analysis** — AI-powered "what if" scenario modeling against historical incidents and regulatory requirements
+## What is already implemented
+
+The current codebase includes the following production-style building blocks:
+
+- Backend API in FastAPI with routers for documents, query handling, knowledge graph access, and intelligence workflows
+- Document ingestion and upload pipeline using ChromaDB for chunked retrieval over plant documents
+- AI copilot experience for natural-language questions with source-backed responses and safety/risk alerts
+- Knowledge graph explorer for equipment, permits, incidents, work orders, hazards, regulations, and compliance findings
+- Compliance analysis, root cause analysis, lessons-learned mining, and maintenance intelligence endpoints
+- A modern Next.js frontend with dashboard, copilot, graph, maintenance, risk, and compliance views
+- A seeded industrial knowledge base for Visakhapatnam Fertilizer Complex with realistic operational documents and findings
+
+## Why this matters
+
+Industrial teams often have the data they need, but the information is scattered across documents, logs, and legacy systems. IndustrialMind is built to reduce that gap by combining:
+
+- retrieval over unstructured technical documents
+- structured relationship reasoning through a knowledge graph
+- AI-assisted summarization and scenario analysis
+- operational views for maintenance and compliance teams
+
+That combination moves the project beyond a single prompt interface toward an applied industrial intelligence workflow.
 
 ## Architecture
 
-```
-Frontend (Next.js 14 + TypeScript + Tailwind)
+```text
+Frontend (Next.js + TypeScript + Tailwind)
     ↕ REST API
 Backend (FastAPI + Python)
-    ├── RAG Engine (ChromaDB + Sentence Transformers)
-    ├── Knowledge Graph (NetworkX — Equipment/WO/Incident/Permit/Regulation/Hazard nodes)
-    ├── AI Agent (OpenAI GPT-4o / Groq Llama-3.3-70b)
-    └── Document Store (5 realistic industrial documents)
+    ├── Document Ingestion & Vector Search (ChromaDB)
+    ├── Knowledge Graph Engine (NetworkX)
+    ├── AI Agent Layer (OpenAI / Groq with fallback)
+    └── Intelligence Modules (Compliance, RCA, Lessons Learned, Maintenance)
 ```
 
-## Demo Dataset
+## Repository structure
 
-The platform ships with 5 realistic synthetic industrial documents for Visakhapatnam Fertilizer Complex:
+```text
+backend/
+  app/
+    routers/          # documents, query, graph, intelligence endpoints
+    services/         # rag_engine, ai_agent, knowledge_graph, rca_engine
+    data/             # seeded documents and metadata
+frontend/
+  app/               # app shell and routes
+  components/        # dashboard, copilot, graph, risk, compliance pages
+  lib/               # API and UI helpers
+```
 
-1. **Maintenance Procedure P-101** — Centrifugal pump maintenance, safety precautions, OISD-116 compliance
-2. **Incident Report IR-2024-047** — Near-miss investigation: NH3 accumulation + concurrent hot work (Aug 2024)
-3. **OISD-116 Extract** — Hot work permit requirements, gas alarm thresholds, inspection intervals
-4. **Work Order Log** — 5 open work orders across P-101, HE-301, V-101A, GD-303
-5. **Compliance Audit Q3-2024** — 2 critical + 5 major non-conformances with regulatory mapping
+## Current maturity
 
-## Quick Start
+This is an alpha-stage but functional platform prototype.
+
+Implemented now:
+- document ingestion and indexing
+- multi-page operational UI
+- knowledge graph exploration
+- compliance and risk-oriented reasoning
+- RCA and maintenance intelligence workflows
+
+Next milestones:
+- connect to real plant systems such as CMMS, EHS, and SCADA
+- replace static graph seeding with automated entity extraction and graph construction
+- add authentication, audit trails, role-based access, and observability
+
+## Seeded industrial dataset
+
+The platform ships with a realistic synthetic dataset centered on a fertilizer complex scenario:
+
+1. Maintenance Procedure P-101
+2. Incident Report IR-2024-047
+3. OISD-116 regulatory extract
+4. Work order log
+5. Compliance audit findings
+
+These documents support use cases around hot-work authorization, equipment maintenance, incident learning, and compliance gap management.
+
+## Quick start
 
 ### Backend
 
@@ -43,13 +91,11 @@ The platform ships with 5 realistic synthetic industrial documents for Visakhapa
 cd backend
 
 # Add your API key to .env
-# Set MODEL_PROVIDER=groq and GROQ_API_KEY for free tier
-# OR MODEL_PROVIDER=openai and OPENAI_API_KEY for GPT-4o
+# Choose one provider:
+#   MODEL_PROVIDER=groq and GROQ_API_KEY
+#   or MODEL_PROVIDER=openai and OPENAI_API_KEY
 
-# Seed documents
 python -m app.data.seed_documents
-
-# Start server
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
@@ -59,57 +105,67 @@ python -m uvicorn app.main:app --reload --port 8000
 cd frontend
 npm install
 npm run dev
-# Open http://localhost:3000
 ```
 
-## Environment Variables
+Open http://localhost:3000 after both services are running.
+
+## Environment variables
 
 ### Backend (.env)
-```
+
+```env
 OPENAI_API_KEY=sk-...
-GROQ_API_KEY=gsk_...          # Free alternative via groq.com
-MODEL_PROVIDER=openai          # or "groq"
+GROQ_API_KEY=gsk-...
+MODEL_PROVIDER=openai
 CHROMA_PERSIST_DIR=./chroma_db
 DOCUMENTS_DIR=./app/data/documents
 ```
 
 ### Frontend (.env.local)
-```
+
+```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 ## Deployment
 
-**Frontend → Vercel**
+### Frontend
+
+Deploy the frontend to Vercel and point it at the backend URL:
+
 ```bash
 cd frontend
 vercel --prod
-# Set NEXT_PUBLIC_API_URL to your Railway backend URL
 ```
 
-**Backend → Railway**
+### Backend
+
+Deploy the backend to Railway or another container host:
+
 ```bash
-# Connect GitHub repo
-# Set root directory: backend
-# Start command: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
-# Add environment variables in Railway dashboard
+cd backend
+python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
-## Judging Criteria Alignment
+Set the same environment variables in the deployment platform.
 
-| Criterion | How We Address It |
-|-----------|-------------------|
-| **Innovation (25%)** | Compound risk detection across multi-source data; knowledge graph connecting equipment → incidents → permits → regulations — not just a chatbot |
-| **Business Impact (25%)** | Directly addresses the "data present, unacted upon" failure mode; demonstrated regulatory compliance coverage |
-| **Technical Excellence (20%)** | RAG + Knowledge Graph + Agentic AI; entity-level extraction; source-cited answers with confidence scores |
-| **Scalability (15%)** | ChromaDB scales to millions of docs; NetworkX graph exportable to Neo4j; stateless FastAPI backend |
-| **User Experience (15%)** | Clean dark-mode UI; mobile-responsive copilot; one-click demo queries; no-login required |
+## Tech stack
 
-## Tech Stack
+- Frontend: Next.js, TypeScript, Tailwind CSS, Framer Motion, React Markdown
+- Backend: FastAPI, Python
+- AI/ML: OpenAI GPT-4o or Groq Llama models
+- Vector database: ChromaDB
+- Graph processing: NetworkX
+- Document processing: PyPDF, pypdf
 
-- **Frontend**: Next.js 14, TypeScript, Tailwind CSS v4, Framer Motion, React Markdown
-- **Backend**: FastAPI, Python 3.14
-- **AI/ML**: OpenAI GPT-4o, Sentence Transformers, LangChain
-- **Vector DB**: ChromaDB
-- **Graph**: NetworkX
-- **Document Processing**: PyMuPDF, pypdf
+## Expected user value
+
+IndustrialMind is meant to help teams answer questions such as:
+
+- What is the current maintenance status of a critical asset?
+- Which work orders and hazards are interacting right now?
+- What compliance gaps are open and what regulations are implicated?
+- What is the likely root cause of a recent incident?
+- What maintenance actions should be prioritized next?
+
+That makes it suitable for safety, maintenance, reliability, and compliance decision support rather than as a generic AI demo.
